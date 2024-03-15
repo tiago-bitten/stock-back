@@ -1,9 +1,13 @@
 import express from 'express';
 import { Router } from 'express';
 
-const app = express();
-export const router = Router();
+export const router = Router(); // Create a router
 
-app.use('/api', router);
+router.get('/', (req, res) => {
+  res.send('Hello World!');
+});
 
+export const app = express(); // Create an Express app
+
+// Export the router as well if needed
 export default app;
