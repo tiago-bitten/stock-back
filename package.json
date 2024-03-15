@@ -1,0 +1,29 @@
+{
+  "name": "stock-back",
+  "version": "1.0.0",
+  "description": "Back end do aplicativo de estoque da Labian Software LTDA.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gosttavo/stock-back.git"
+  },
+  "author": "Labian Software LTDA",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gosttavo/stock-back/issues"
+  },
+  "homepage": "https://github.com/gosttavo/stock-back#readme",
+  "dependencies": {
+    "express": "^4.18.3",
+    "mysql": "^2.18.1",
+    "reflect-metadata": "^0.2.1",
+    "tsc": "^2.0.4",
+    "typeorm": "^0.3.20"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.28"
+  }
+}
