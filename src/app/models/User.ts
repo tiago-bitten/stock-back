@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('user')
 class User {
@@ -11,8 +11,8 @@ class User {
     @Column('varchar', { length: 150, unique: true, nullable: false })
     email!: string;
 
-    @Column('int', { unique: true, nullable: false })
-    CPF!: number;
+    @Column('varchar', { length: 11, unique: true, nullable: false })
+    CPF!: string;
 }
 
 export default User;
