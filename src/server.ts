@@ -1,13 +1,17 @@
+import "reflect-metadata";
 import express from 'express';
-import { router } from './app';
+import cors from 'cors';
+import { AppDataSource } from "./database/data-source";
 
 const app = express();
 
+app.use(cors());
+
 app.use(express.json());
-app.use('/api', router);
 
-const server = app.listen(3000, () =>
-  console.log('Stock server ready at: http://localhost:3000')
-);
-
-export default server;
+AppDataSource.initialize().then(async () => {
+    console.log('Tiagão de 4');
+    app.listen(3333, () => {
+        console.log('Server is running on port 3333');
+    });
+});
