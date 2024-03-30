@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { CreateUserTable1711801468579 } from './migrations/1711801468579-CreateUserTable';
+import User from '../app/models/User';
 
 export const AppDataSource = new DataSource({ 
     type: 'mysql',
@@ -11,7 +12,7 @@ export const AppDataSource = new DataSource({
     database: 'stock-sense',
     synchronize: true,
     logging: false,
-    entities: [],
+    entities: [User],
     migrations: [CreateUserTable1711801468579],
     subscribers: []
 });
