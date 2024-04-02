@@ -1,12 +1,12 @@
 # StockSense&copy; - Stock Software
 
 ## To run the API:
-```npm run dev:server```
+<pre>npm run dev:server</pre>
 
 ## To create a new migration:
-```npm run typeorm migration:create src/database/migrations/CreateUserTable```
+<pre>npm run typeorm migration:create src/database/migrations/CreateUserTable</pre>
 
 ## To run a migration:
-```npm run typeorm -- -d ./src/database/data-source.ts migration:run```
+<pre>npm run typeorm -- -d ./src/database/data-source.ts migration:run</pre>
 
 Made with _a lot_ of ☕ by: Labian Software LTDA &copy; 2024
