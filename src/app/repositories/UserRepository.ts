@@ -1,11 +1,11 @@
-import User from '../models/User';
-import IUser from '../interfaces/IUser';
+import Usuario from '../models/Usuario';
+import IUsuario from '../interfaces/IUsuario';
 import { AppDataSource } from '../../database/data-source';
 
-const userRepository = AppDataSource.getRepository(User);
+const userRepository = AppDataSource.getRepository(Usuario);
 
-const getUsers = (): Promise<IUser[]> => {
+const getUsuarios = (): Promise<IUsuario[]> => {
     return userRepository.find();
 }
 
-export default { getUsers };
+export default { getUsuarios };

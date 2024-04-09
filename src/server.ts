@@ -2,7 +2,7 @@ import "reflect-metadata";
 import express from 'express';
 import cors from 'cors';
 import { AppDataSource } from "./database/data-source";
-import UserRouter from './app/routes/UserRouter';
+import UsuarioRouter from './app/routes/UsuarioRouter';
 import AuthRouter from './auth/AuthRouter';
 
 const app = express();
@@ -12,7 +12,7 @@ app.use(express.json());
 
 //#region = ROUTERS
 
-app.use(UserRouter);
+app.use(UsuarioRouter);
 app.use(AuthRouter);
 
 //#endregion

@@ -1,5 +1,5 @@
-import { CreateUserTable1711801468579 } from "./migrations/1711801468579-CreateUserTable";
+import { CreateUsuarioTable1711801468579 } from "./migrations/1711801468579-CreateUsuarioTable";
 
 export const migrations = [
-    CreateUserTable1711801468579
+    CreateUsuarioTable1711801468579
 ]
