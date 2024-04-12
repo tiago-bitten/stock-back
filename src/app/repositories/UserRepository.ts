@@ -1,8 +1,8 @@
-import User from '../models/User';
-import IUser from '../interfaces/IUser';
+import Usuario from '../models/Usuario';
+import IUsuario from '../interfaces/IUsuario';
 import { AppDataSource } from '../../database/data-source';
 
-const userRepository = AppDataSource.getRepository(User);
+const userRepository = AppDataSource.getRepository(Usuario);
 
 class UserRepository {
     public getUsers = (): Promise<IUser[]> => {

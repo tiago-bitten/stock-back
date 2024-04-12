@@ -4,7 +4,7 @@
 <pre>npm run dev:server</pre>
 
 ## To create a new migration:
-<pre>npm run typeorm migration:create src/database/migrations/CreateUserTable</pre>
+<pre>npm run typeorm migration:create src/database/migrations/CreateUsuarioTable</pre>
 
 ## To run a migration:
 <pre>npm run typeorm -- -d ./src/database/data-source.ts migration:run</pre>

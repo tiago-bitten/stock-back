@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import UserRepository from '../repositories/UserRepository';
+import UsuarioRepository from '../repositories/UsuarioRepository';
 
-class UserController {
+class UsuarioController {
 
+    static getUsuarios = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
     public getUsers = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const users = await UserRepository.getUsers();
+            const users = await UsuarioRepository.getUsuarios();
 
             return res.status(200).send({
                 users

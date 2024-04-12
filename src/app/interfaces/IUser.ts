@@ -1,4 +1,4 @@
-export default interface IUser {
+export default interface IUsuario {
     id?: number,
     name: string,
     email: string,
