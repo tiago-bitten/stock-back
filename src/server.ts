@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { AppDataSource } from "./database/data-source";
 import UserRouter from './app/routes/UserRouter';
-import AuthRouter from './auth/AuthRouter';
+import AuthRouter from './app/routes/AuthRouter';
 
 const app = express();
 
