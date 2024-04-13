@@ -3,10 +3,9 @@ import UsuarioRepository from '../repositories/UsuarioRepository';
 
 class UsuarioController {
 
-    static getUsuarios = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
     public getUsers = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const users = await UsuarioRepository.getUsuarios();
+            const users = await UsuarioRepository.getUsers();
 
             return res.status(200).send({
                 users
@@ -21,11 +20,11 @@ class UsuarioController {
     };
 
     public storeUser = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
-        const userRepository = UserRepository;
+        const userRepository = UsuarioRepository;
 
-        const { name, email, password, CPF } = req.body;
+        const { nome, email, senha, cpf, account } = req.body;
 
-        if (!name || !email || !password || !CPF) {
+        if (!nome || !email || !senha || !cpf || !account) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
@@ -36,7 +35,7 @@ class UsuarioController {
         }
 
         const newUser = await userRepository.createNewUser(
-            { name, email, password, CPF }
+            { nome, email, senha, cpf, account }
         );
 
         return res.status(201).json({
@@ -46,4 +45,4 @@ class UsuarioController {
     };
 }
 
-export default new UserController;
+export default new UsuarioController;

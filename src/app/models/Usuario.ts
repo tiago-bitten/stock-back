@@ -1,6 +1,5 @@
-import { hashSync, compareSync } from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { Entity, Column, Index } from 'typeorm';
+import { hashSync } from 'bcrypt';
+import { Entity, Column, BeforeInsert, BeforeUpdate, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('usuario')
 @Index(["account", "id"], { unique: true })
@@ -8,7 +7,7 @@ class Usuario {
     @Column('int', { nullable: false })
     account: number;
 
-    @Column('int', { nullable: false })
+    @PrimaryGeneratedColumn('increment')
     id: number;
 
     @Column('varchar', { length: 150, nullable: false })
@@ -17,26 +16,19 @@ class Usuario {
     @Column('varchar', { length: 150, unique: true, nullable: false })
     email: string;
 
-    @Column('varchar', { length: 25, nullable: false })
+    @Column('varchar', { length: 11, unique: true, nullable: false })
+    cpf: string;
+
+    @Column('varchar', { length: 60, nullable: false })
     senha: string;
 
-    @Column('int', { nullable: false })
+    @Column('int', { nullable: true })
     cargo: number;
 
-    setPassword = (senha: string) => {
-        return (this.senha = hashSync(senha, 10));
-    };
-
-    isValidPassword = (senha: string) => {
-        return compareSync(senha, this.senha);
-    };
-
-    generateJWT = () => {
-        return jwt.sign(
-            { email: this.email }, 
-            'SECRET_KEY', 
-            { expiresIn: '1h' }
-        );
+    @BeforeInsert()
+    @BeforeUpdate()
+    hashPassword () {
+        return (this.senha = hashSync(this.senha, 8));
     };
 }
 

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import UserRepository from '../repositories/UserRepository';
+import UserRepository from '../repositories/UsuarioRepository';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 class AuthController {
@@ -7,9 +7,9 @@ class AuthController {
     public authenticate = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         const userRepository = UserRepository;    
 
-        const { email, password } = req.body;
+        const { email, senha } = req.body;
 
-        if (!email || !password) {
+        if (!email || !senha) {
             return res.status(400).json({ message: 'Email and password are required!' });
         }
 
@@ -19,7 +19,7 @@ class AuthController {
             return res.status(404).json({ message: 'User not found!' });
         }
 
-        const isValidPassword = await bcrypt.compare(password, user.password);
+        const isValidPassword = await bcrypt.compare(senha, user.senha);
 
         if (!isValidPassword) {
             return res.status(401).json({ message: 'Invalid password!' });

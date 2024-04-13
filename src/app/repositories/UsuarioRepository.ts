@@ -4,25 +4,26 @@ import { AppDataSource } from '../../database/data-source';
 
 const userRepository = AppDataSource.getRepository(Usuario);
 
-class UserRepository {
-    public getUsers = (): Promise<IUser[]> => {
+class UsuarioRepository {
+    public getUsers = (): Promise<IUsuario[]> => {
         return userRepository.find();
     }
     
-    public getUserByEmail = (email: string): Promise<IUser | null> => {
+    public getUserByEmail = (email: string): Promise<IUsuario | null> => {
         return userRepository.findOne({ where: { email } });
     }
     
-    public createNewUser = (user: IUser) => {
+    public createNewUser = (user: IUsuario) => {
         const newUser = userRepository.create({
             email: user.email,
-            name: user.name,
-            CPF: user.CPF,
-            password: user.password
+            nome: user.nome,
+            cpf: user.cpf,
+            senha: user.senha,
+            account: user.account
         });
 
         return userRepository.save(newUser);
     }
 }
 
-export default new UserRepository;
+export default new UsuarioRepository;
