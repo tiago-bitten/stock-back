@@ -12,13 +12,21 @@
 ## To run a migration:
 <pre>npm run typeorm -- -d ./src/database/data-source.ts migration:run</pre>
 
-## Naming Convention:
-In Portuguese:
+# Convention
+
+## Language:
+In Portuguese 🇧🇷
 * Entities;
 * File names related to entities;
 * Models;
 * Request variables;
+* Tables, Columns and Triggers;
 
-Everything else in English.
+Everything else in English 🇬🇧
 
+## Nomenclature:
+* Variables, Consts, Functions and Columns - 🐫 camelCase;
+* File names, Clases, Models, Copyrigth - 🗿 PascalCase;
+
+# Copyright
 Made with _a lot_ of ☕ by: Labian Software LTDA &copy; 2024
