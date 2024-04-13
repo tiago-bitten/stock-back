@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
-export class CreateUsuarioTable1711801468579 implements MigrationInterface {
+export class CreateEmpresaTable1712972515016 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: 'usuario',
+                name: 'empresa',
                 columns: [
                     {
                         name: 'id',
@@ -15,41 +15,48 @@ export class CreateUsuarioTable1711801468579 implements MigrationInterface {
                         generationStrategy: 'increment'
                     },
                     {
-                        name: 'empresa',
-                        type: 'int',
-                        isPrimary: true,
-                        isNullable: false
-                    },
-                    {
-                        name: 'nome',
+                        name: 'descricao',
                         type: 'varchar',
                         length: '150',
                         isNullable: false
                     },
                     {
-                        name: 'email',
+                        name: 'cnpj',
                         type: 'varchar',
-                        length: '150',
-                        isNullable: false,
-                        isUnique: true
-                    },
-                    {
-                        name: 'cpf',
-                        type: 'varchar',
-                        length: '11',
-                        isNullable: false,
-                        isUnique: true
-                    },
-                    {
-                        name: 'senha',
-                        type: 'varchar',
-                        length: '60',
+                        length: '25',
                         isNullable: false
                     },
                     {
-                        name: 'cargo',
+                        name: 'telefone',
+                        type: 'varchar',
+                        length: '25',
+                        isNullable: false
+                    },
+                    {
+                        name: 'contrato',
                         type: 'int',
-                        isNullable: true
+                        isNullable: false
+                    },
+                    {
+                        name: 'logradouro',
+                        type: 'varchar',
+                        length: '250',
+                        isNullable: false
+                    },
+                    {
+                        name: 'cidade',
+                        type: 'int',
+                        isNullable: false
+                    },
+                    {
+                        name: 'ativo',
+                        type: 'boolean',
+                        isNullable: false
+                    },
+                    {
+                        name: 'quantidadeUsuarios',
+                        type: 'int',
+                        isNullable: false
                     }
                 ]
             })
@@ -57,7 +64,7 @@ export class CreateUsuarioTable1711801468579 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('usuario');
+        await queryRunner.dropTable('empresa');
     }
 
 }

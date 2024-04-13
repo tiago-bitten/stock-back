@@ -2,10 +2,10 @@ import { hashSync } from 'bcrypt';
 import { Entity, Column, BeforeInsert, BeforeUpdate, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('usuario')
-@Index(["account", "id"], { unique: true })
+@Index(["empresa", "id"], { unique: true })
 class Usuario {
     @Column('int', { nullable: false })
-    account: number;
+    empresa: number;
 
     @PrimaryGeneratedColumn('increment')
     id: number;

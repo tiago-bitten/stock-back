@@ -1,10 +1,10 @@
 import { Entity, Column, Index } from 'typeorm';
 
 @Entity('fornecedor_produto')
-@Index(["account", "fornecedor", "produto"], { unique: true })
+@Index(["empresa", "fornecedor", "produto"], { unique: true })
 class FornecedorProduto {
     @Column('int', { nullable: false })
-    account: number;
+    empresa: number;
 
     @Column('int', { nullable: false })
     fornecedor: number;

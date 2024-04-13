@@ -1,9 +1,9 @@
 export default interface IUsuario {
     id?: number,
-    account?: number,
+    empresa?: number,
     nome: string,
     email: string,
     cpf: string,
-    senha: string,
+    senha?: string,
     cargo?: number
 }
