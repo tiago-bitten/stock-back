@@ -9,8 +9,9 @@ class EmpresaRepository {
         return empresaRepository.find();
     };
 
-    public getCompanyByCnpj = (cnpj: string): Promise<IEmpresa | null> => {
-        return empresaRepository.findOne({ where: { cnpj } });
+    public getCompany = ({ cnpj, id }: { cnpj?: string; id?: number }): Promise<IEmpresa | null> => {
+        const whereClause = cnpj ? { cnpj } : id ? { id } : null;
+        return whereClause ? empresaRepository.findOne({ where: whereClause }) : Promise.resolve(null);
     }
 
     public createNewCompany = (company: IEmpresa) => {
@@ -21,8 +22,7 @@ class EmpresaRepository {
             contrato: company.contrato,
             logradouro: company.logradouro,
             cidade: company.cidade,
-            ativo: company.ativo,
-            quantidadeUsuarios: company.quantidadeUsuarios
+            ativo: company.ativo
         });
 
         return empresaRepository.save(newCompany);

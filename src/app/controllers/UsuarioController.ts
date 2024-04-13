@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import UsuarioRepository from '../repositories/UsuarioRepository';
+import EmpresaRepository from '../repositories/EmpresaRepository';
 
 class UsuarioController {
 
@@ -21,6 +22,7 @@ class UsuarioController {
     public storeUser = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
             const userRepository = UsuarioRepository;
+            const empresaRepository = EmpresaRepository;
 
             const { nome, email, senha, cpf, empresa } = req.body;
 
@@ -28,10 +30,16 @@ class UsuarioController {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            const userExists = await userRepository.getUserByEmail(email);
+            const userExists = await userRepository.getUser(email);
 
             if (userExists != null) {
                 return res.status(409).json({ message: 'User already exists' });
+            }
+
+            const companyExists = await empresaRepository.getCompany({id: empresa});
+
+            if (companyExists == null) {
+                return res.status(404).json({ message: 'Company not found, please, request an invite from an admin' });
             }
 
             const newUser = await userRepository.createNewUser(

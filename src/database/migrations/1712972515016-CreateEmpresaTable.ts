@@ -54,9 +54,14 @@ export class CreateEmpresaTable1712972515016 implements MigrationInterface {
                         isNullable: false
                     },
                     {
-                        name: 'quantidadeUsuarios',
-                        type: 'int',
-                        isNullable: false
+                        name: 'created_at',
+                        type: 'timestamp',
+                        default: 'now()'
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'timestamp',
+                        default: 'now()'
                     }
                 ]
             })

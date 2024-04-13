@@ -15,7 +15,7 @@ export class CreateUsuarioTable1711801468579 implements MigrationInterface {
                         generationStrategy: 'increment'
                     },
                     {
-                        name: 'empresa',
+                        name: 'empresaId',
                         type: 'int',
                         isPrimary: true,
                         isNullable: false
@@ -50,6 +50,16 @@ export class CreateUsuarioTable1711801468579 implements MigrationInterface {
                         name: 'cargo',
                         type: 'int',
                         isNullable: true
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'timestamp',
+                        default: 'now()'
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'timestamp',
+                        default: 'now()'
                     }
                 ]
             })

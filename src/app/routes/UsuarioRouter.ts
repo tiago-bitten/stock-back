@@ -4,7 +4,7 @@ import authMiddleware from "../middlewares/authMiddleware";
 
 const router = Router();
 
-router.get('/user', authMiddleware, UsuarioController.getUsers);
+router.get('/user', authMiddleware(), UsuarioController.getUsers);
 router.post('/user', UsuarioController.storeUser);
 
 export default router;

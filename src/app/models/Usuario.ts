@@ -1,10 +1,12 @@
 import { hashSync } from 'bcrypt';
-import { Entity, Column, BeforeInsert, BeforeUpdate, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, BeforeInsert, BeforeUpdate, Index, PrimaryGeneratedColumn, OneToMany, ManyToOne, CreateDateColumn } from 'typeorm';
+import Empresa from './Empresa';
+import Cargo from './Cargo';
 
 @Entity('usuario')
 @Index(["empresa", "id"], { unique: true })
 class Usuario {
-    @Column('int', { nullable: false })
+    @ManyToOne(() => Empresa, (empresa) => empresa.usuario)
     empresa: number;
 
     @PrimaryGeneratedColumn('increment')
@@ -22,8 +24,14 @@ class Usuario {
     @Column('varchar', { length: 60, nullable: false })
     senha: string;
 
-    @Column('int', { nullable: true })
+    @ManyToOne(() => Cargo, (cargo) => cargo.usuario)
     cargo: number;
+
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date;
+
+    @CreateDateColumn({ name: 'updated_at' })
+    updatedAt: Date;
 
     @BeforeInsert()
     @BeforeUpdate()

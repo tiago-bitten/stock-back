@@ -1,9 +1,10 @@
-import { Entity, Column, Index } from 'typeorm';
+import { Entity, Column, Index, CreateDateColumn, ManyToOne } from 'typeorm';
+import Empresa from './Empresa';
 
 @Entity('categoria')
 @Index(["empresa", "id"], { unique: true })
 class Categoria {
-    @Column('int', { nullable: false })
+    @ManyToOne(() => Empresa, (empresa) => empresa.categoria)
     empresa: number;
 
     @Column('int', { nullable: false })
@@ -11,6 +12,12 @@ class Categoria {
 
     @Column('varchar', { length: 150, nullable: false })
     descricao: string;
+
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date;
+
+    @CreateDateColumn({ name: 'updated_at' })
+    updatedAt: Date;
 }
 
 export default Categoria;

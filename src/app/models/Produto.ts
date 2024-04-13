@@ -1,9 +1,10 @@
-import { Entity, Column, Index } from 'typeorm';
+import { Entity, Column, Index, CreateDateColumn, ManyToOne } from 'typeorm';
+import Empresa from './Empresa';
 
 @Entity('produto')
 @Index(["empresa", "id"], { unique: true })
 class Produto {
-    @Column('int', { nullable: false })
+    @ManyToOne(() => Empresa, (empresa) => empresa.produto)
     empresa: number;
 
     @Column('int', { nullable: false })
@@ -29,6 +30,12 @@ class Produto {
 
     @Column('date', { nullable: false })
     validade: Date;
+
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date;
+
+    @CreateDateColumn({ name: 'updated_at' })
+    updatedAt: Date;
 }
 
 export default Produto;

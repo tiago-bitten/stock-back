@@ -6,6 +6,5 @@ export default interface IEmpresa {
     contrato: number,
     logradouro: string,
     cidade: number,
-    ativo: boolean,
-    quantidadeUsuarios: number
+    ativo: boolean
 }

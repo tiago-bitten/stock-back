@@ -21,20 +21,20 @@ class EmpresaController {
         try {
             const companyRepository = EmpresaRepository;
 
-            const { descricao, cnpj, telefone, contrato, logradouro, cidade, ativo, quantidadeUsuarios } = req.body;
+            const { descricao, cnpj, telefone, contrato, logradouro, cidade, ativo } = req.body;
 
-            if (!descricao || !cnpj || !telefone || !contrato || !logradouro || !cidade || !ativo || !quantidadeUsuarios) {
+            if (!descricao || !cnpj || !telefone || !contrato || !logradouro || !cidade || !ativo) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            const companyExists = await companyRepository.getCompanyByCnpj(cnpj);
+            const companyExists = await companyRepository.getCompany(cnpj);
 
             if (companyExists != null) {
                 return res.status(409).json({ message: 'Company already exists' });
             }
 
             const newCompany = await companyRepository.createNewCompany(
-                { descricao, cnpj, telefone, contrato, logradouro, cidade, ativo, quantidadeUsuarios}
+                { descricao, cnpj, telefone, contrato, logradouro, cidade, ativo }
             );
 
             return res.status(201).json({
