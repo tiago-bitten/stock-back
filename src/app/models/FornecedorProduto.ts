@@ -1,4 +1,4 @@
-import { Entity, Column, Index, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, Index, CreateDateColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import Empresa from './Empresa';
 import Fornecedor from './Fornecedor';
 import Produto from './Produto';
@@ -8,6 +8,9 @@ import Produto from './Produto';
 class FornecedorProduto {
     @ManyToOne(() => Empresa, (empresa) => empresa.fornecedorProduto)
     empresa: number;
+
+    @PrimaryGeneratedColumn('increment')
+    id: number;
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;

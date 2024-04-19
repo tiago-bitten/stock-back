@@ -1,4 +1,4 @@
-import { Entity, Column, Index, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, Index, CreateDateColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import Empresa from './Empresa';
 import Entrada from './Entrada';
 import FornecedorProduto from './FornecedorProduto';
@@ -11,7 +11,7 @@ class Produto {
     @ManyToOne(() => Empresa, (empresa) => empresa.produto)
     empresa: number;
 
-    @Column('int', { nullable: false })
+    @PrimaryGeneratedColumn('increment')
     id: number;
 
     @Column('varchar', { length: 150, nullable: false })

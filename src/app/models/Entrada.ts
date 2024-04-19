@@ -1,4 +1,4 @@
-import { Entity, Column, Index, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, Index, CreateDateColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import Empresa from './Empresa';
 import Lote from './Lote';
 import Produto from './Produto';
@@ -10,7 +10,7 @@ class Entrada {
     @ManyToOne(() => Empresa, (empresa) => empresa.entrada)
     empresa: number;
 
-    @Column('int', { nullable: false })
+    @PrimaryGeneratedColumn('increment')
     id: number;
 
     @Column('int', { nullable: false })
