@@ -3,7 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import { AppDataSource } from "./database/data-source";
 import UsuarioRouter from './app/routes/UsuarioRouter';
-import AuthRouter from './auth/AuthRouter';
+import AuthRouter from './app/routes/AuthRouter';
+import EmpresaRouter from './app/routes/EmpresaRouter';
 
 const app = express();
 
@@ -11,10 +12,9 @@ app.use(cors());
 app.use(express.json());
 
 //#region = ROUTERS
-
+app.use(AuthRouter)
 app.use(UsuarioRouter);
-app.use(AuthRouter);
-
+app.use(EmpresaRouter);
 //#endregion
 
 AppDataSource.initialize().then(async () => {

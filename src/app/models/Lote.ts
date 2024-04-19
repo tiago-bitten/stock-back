@@ -1,20 +1,35 @@
-import { Entity, Column, Index } from 'typeorm';
+import { Entity, Column, Index, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import Empresa from './Empresa';
+import Estoque from './Estoque';
+import Entrada from './Entrada';
+import Saida from './Saida';
 
 @Entity('lote')
-@Index(["account", "id"], { unique: true })
+@Index(["empresa", "id"], { unique: true })
 class Lote {
-    @Column('int', { nullable: false })
-    account: number;
+    @ManyToOne(() => Empresa, (empresa) => empresa.lote)
+    empresa: number;
 
     @Column('int', { nullable: false })
     id: number;
 
-    @Column('int', { nullable: false })
-    estoque: number;
-
     @Column('date', { nullable: false })
     data: Date;
 
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date;
+
+    @CreateDateColumn({ name: 'updated_at' })
+    updatedAt: Date;
+
+    @ManyToOne(() => Estoque, (estoque) => estoque.lote)
+    estoque: number;
+
+    @OneToMany(() => Entrada, (entrada) => entrada.lote)
+    entrada: Entrada[];
+
+    @OneToMany(() => Saida, (saida) => saida.fornecedor)
+    saida: Saida[];
 }
 
 export default Lote;

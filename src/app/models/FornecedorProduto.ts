@@ -1,15 +1,24 @@
-import { Entity, Column, Index } from 'typeorm';
+import { Entity, Column, Index, CreateDateColumn, ManyToOne } from 'typeorm';
+import Empresa from './Empresa';
+import Fornecedor from './Fornecedor';
+import Produto from './Produto';
 
 @Entity('fornecedor_produto')
-@Index(["account", "fornecedor", "produto"], { unique: true })
+@Index(["empresa", "fornecedor", "produto"], { unique: true })
 class FornecedorProduto {
-    @Column('int', { nullable: false })
-    account: number;
+    @ManyToOne(() => Empresa, (empresa) => empresa.fornecedorProduto)
+    empresa: number;
 
-    @Column('int', { nullable: false })
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date;
+
+    @CreateDateColumn({ name: 'updated_at' })
+    updatedAt: Date;
+
+    @ManyToOne(() => Fornecedor, (fornecedor) => fornecedor.fornecedorProduto)
     fornecedor: number;
 
-    @Column('int', { nullable: false })
+    @ManyToOne(() => Produto, (produto) => produto.fornecedorProduto)
     produto: number;
 }
 

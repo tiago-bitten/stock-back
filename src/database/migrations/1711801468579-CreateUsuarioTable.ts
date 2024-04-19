@@ -5,7 +5,7 @@ export class CreateUsuarioTable1711801468579 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: 'user',
+                name: 'usuario',
                 columns: [
                     {
                         name: 'id',
@@ -15,7 +15,13 @@ export class CreateUsuarioTable1711801468579 implements MigrationInterface {
                         generationStrategy: 'increment'
                     },
                     {
-                        name: 'name',
+                        name: 'empresaId',
+                        type: 'int',
+                        isPrimary: true,
+                        isNullable: false
+                    },
+                    {
+                        name: 'nome',
                         type: 'varchar',
                         length: '150',
                         isNullable: false
@@ -28,17 +34,32 @@ export class CreateUsuarioTable1711801468579 implements MigrationInterface {
                         isUnique: true
                     },
                     {
-                        name: 'CPF',
+                        name: 'cpf',
                         type: 'varchar',
                         length: '11',
                         isNullable: false,
                         isUnique: true
                     },
                     {
-                        name: 'password',
+                        name: 'senha',
                         type: 'varchar',
-                        length: '25',
+                        length: '60',
                         isNullable: false
+                    },
+                    {
+                        name: 'cargo',
+                        type: 'int',
+                        isNullable: true
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'timestamp',
+                        default: 'now()'
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'timestamp',
+                        default: 'now()'
                     }
                 ]
             })
@@ -46,7 +67,7 @@ export class CreateUsuarioTable1711801468579 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('user');
+        await queryRunner.dropTable('usuario');
     }
 
 }
