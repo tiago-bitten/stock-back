@@ -1,5 +1,6 @@
-import { Entity, Column, Index, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, Index, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import Empresa from './Empresa';
+import Produto from './Produto';
 
 @Entity('categoria')
 @Index(["empresa", "id"], { unique: true })
@@ -18,6 +19,10 @@ class Categoria {
 
     @CreateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
+
+    @OneToMany(() => Produto, (produto) => produto.categoria)
+    produto: Produto[];
+
 }
 
 export default Categoria;

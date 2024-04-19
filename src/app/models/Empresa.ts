@@ -25,9 +25,6 @@ class Empresa {
     @Column('varchar', { length: 25, nullable: false })
     telefone: string;
 
-    @Column('int', { nullable: false })
-    contrato: number;
-
     @Column('varchar', { length: 250, nullable: false })
     logradouro: string;
 

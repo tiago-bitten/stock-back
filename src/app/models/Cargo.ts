@@ -10,12 +10,12 @@ class Cargo {
 
     @Column('int', { nullable: false })
     id: number;
-    
-    @OneToMany(() => Usuario, (usuario) => usuario.cargo)
-    usuario: Usuario[];
 
     @Column('varchar', { length: 150, nullable: false })
     descricao: string;
+    
+    @OneToMany(() => Usuario, (usuario) => usuario.cargo)
+    usuario: Usuario[];
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;

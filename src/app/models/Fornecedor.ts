@@ -1,5 +1,8 @@
-import { Entity, Column, Index, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, Index, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import Empresa from './Empresa';
+import Entrada from './Entrada';
+import FornecedorProduto from './FornecedorProduto';
+import Saida from './Saida';
 
 @Entity('fornecedor')
 @Index(["empresa", "id"], { unique: true })
@@ -33,6 +36,15 @@ class Fornecedor {
 
     @CreateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
+
+    @OneToMany(() => Entrada, (entrada) => entrada.fornecedor)
+    entrada: Entrada[];
+
+    @OneToMany(() => FornecedorProduto, (fornecedorProduto) => fornecedorProduto.fornecedor)
+    fornecedorProduto: FornecedorProduto[];
+
+    @OneToMany(() => Saida, (saida) => saida.fornecedor)
+    saida: Saida[];
 }
 
 export default Fornecedor;

@@ -1,6 +1,7 @@
 import { Entity, Column, Index, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import Empresa from './Empresa';
 import Lote from './Lote';
+import UsuarioBloqueio from './UsuarioBloqueio';
 
 @Entity('estoque')
 @Index(["empresa", "id"], { unique: true })
@@ -22,6 +23,9 @@ class Estoque {
 
     @OneToMany(() => Lote, (lote) => lote.estoque)
     lote: Lote[];
+
+    @OneToMany(() => UsuarioBloqueio, (usuarioBloqueio) => usuarioBloqueio.estoque)
+    usuarioBloqueio: UsuarioBloqueio[];
 }
 
 export default Estoque;
