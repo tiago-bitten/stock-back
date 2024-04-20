@@ -1,11 +1,14 @@
-export default interface IEmpresa {
+import IEmpresa from "./IEmpresa";
+
+export default interface IFornecedor {
     id?: number,
+    empresa: number | IEmpresa,
     descricao: string,
-    cnpj: string,
+    email: string,
     telefone: string,
+    cnpj: string,
     logradouro: string,
     cidade: number,
-    ativo: boolean,
     createdAt?: Date,
     updatedAt?: Date
 }
