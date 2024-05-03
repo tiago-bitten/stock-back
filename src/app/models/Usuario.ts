@@ -2,6 +2,7 @@ import { hashSync } from 'bcrypt';
 import { Entity, Column, BeforeInsert, BeforeUpdate, Index, PrimaryGeneratedColumn, OneToMany, ManyToOne, CreateDateColumn } from 'typeorm';
 import Empresa from './Empresa';
 import Cargo from './Cargo';
+import UsuarioBloqueio from './UsuarioBloqueio';
 
 @Entity('usuario')
 @Index(["empresa", "id"], { unique: true })
@@ -32,6 +33,9 @@ class Usuario {
 
     @CreateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
+
+    @OneToMany(() => UsuarioBloqueio, (usuarioBloqueio) => usuarioBloqueio.usuario)
+    usuarioBloqueio: UsuarioBloqueio[];
 
     @BeforeInsert()
     @BeforeUpdate()

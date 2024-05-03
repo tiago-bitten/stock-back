@@ -1,4 +1,4 @@
-import { Entity, Column, Index, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, Index, CreateDateColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import Empresa from './Empresa';
 import Estoque from './Estoque';
 import Entrada from './Entrada';
@@ -10,7 +10,7 @@ class Lote {
     @ManyToOne(() => Empresa, (empresa) => empresa.lote)
     empresa: number;
 
-    @Column('int', { nullable: false })
+    @PrimaryGeneratedColumn('increment')
     id: number;
 
     @Column('date', { nullable: false })

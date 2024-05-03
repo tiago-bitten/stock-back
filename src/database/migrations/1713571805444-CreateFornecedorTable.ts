@@ -1,75 +1,77 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
-export class CreateEmpresaTable1712972515016 implements MigrationInterface {
+export class CreateFornecedorTable1713571805444 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.createTable(
+        queryRunner.createTable(
             new Table({
-                name: 'empresa',
+                name: 'fornecedor',
                 columns: [
+                    {
+                        name: 'empresa',
+                        type: 'int',
+                    },
                     {
                         name: 'id',
                         type: 'int',
                         isPrimary: true,
                         isGenerated: true,
-                        generationStrategy: 'increment'
+                        generationStrategy: 'increment',
                     },
                     {
                         name: 'descricao',
                         type: 'varchar',
                         length: '150',
-                        isNullable: false
                     },
                     {
-                        name: 'cnpj',
+                        name: 'email',
                         type: 'varchar',
-                        length: '25',
-                        isNullable: false
+                        length: '250',
                     },
                     {
                         name: 'telefone',
                         type: 'varchar',
-                        length: '25',
-                        isNullable: false
+                        length: '18',
                     },
                     {
-                        name: 'contrato',
-                        type: 'int',
-                        isNullable: false
+                        name: 'cnpj',
+                        type: 'varchar',
+                        length: '20',
                     },
                     {
                         name: 'logradouro',
                         type: 'varchar',
                         length: '250',
-                        isNullable: false
                     },
                     {
                         name: 'cidade',
                         type: 'int',
-                        isNullable: false
-                    },
-                    {
-                        name: 'ativo',
-                        type: 'boolean',
-                        isNullable: false
                     },
                     {
                         name: 'created_at',
                         type: 'timestamp',
-                        default: 'now()'
                     },
                     {
                         name: 'updated_at',
                         type: 'timestamp',
-                        default: 'now()'
-                    }
-                ]
-            })
+                    },
+                ],
+                foreignKeys: [
+                    {
+                        name: 'FKFornecedorEmpresa',
+                        referencedTableName: 'empresa',
+                        referencedColumnNames: ['id'],
+                        columnNames: ['empresa'],
+                        onDelete: 'CASCADE',
+                        onUpdate: 'CASCADE',
+                    },
+                ],
+            }),
         );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('empresa');
+        queryRunner.dropTable('fornecedor');    
     }
 
 }

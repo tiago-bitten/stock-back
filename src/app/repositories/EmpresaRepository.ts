@@ -1,3 +1,4 @@
+import { DeepPartial } from "typeorm";
 import { AppDataSource } from "../../database/data-source";
 import IEmpresa from "../interfaces/IEmpresa";
 import Empresa from "../models/Empresa";
@@ -19,11 +20,10 @@ class EmpresaRepository {
             descricao: company.descricao,
             cnpj: company.cnpj,
             telefone: company.telefone,
-            contrato: company.contrato,
             logradouro: company.logradouro,
             cidade: company.cidade,
             ativo: company.ativo
-        });
+        } as DeepPartial<Empresa>);
 
         return empresaRepository.save(newCompany);
     }
