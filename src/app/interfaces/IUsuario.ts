@@ -8,7 +8,7 @@ export default interface IUsuario {
     email: string,
     cpf: string,
     senha?: string,
-    cargo: number | ICargo,
+    cargo?: number | ICargo,
     createdAt?: Date,
     updatedAt?: Date
 }
