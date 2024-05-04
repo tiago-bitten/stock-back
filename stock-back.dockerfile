@@ -20,7 +20,7 @@ RUN npm run build
 RUN npm run typeorm -- -d ./src/database/data-source.ts migration:run
 
 # Expõe a porta que a aplicação usará
-EXPOSE 3000
+EXPOSE 3333
 
 # Comando para executar a aplicação
 CMD ["npm", "start"]
