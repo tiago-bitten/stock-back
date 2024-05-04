@@ -5,6 +5,7 @@ import { AppDataSource } from "./database/data-source";
 import UsuarioRouter from './app/routes/UsuarioRouter';
 import AuthRouter from './app/routes/AuthRouter';
 import EmpresaRouter from './app/routes/EmpresaRouter';
+import HealthRoute from './app/routes/HealthRoute';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(AuthRouter)
 app.use(UsuarioRouter);
 app.use(EmpresaRouter);
+app.use(HealthRoute);
 //#endregion
 
 AppDataSource.initialize().then(async () => {
