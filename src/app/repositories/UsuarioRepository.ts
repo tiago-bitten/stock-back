@@ -12,19 +12,21 @@ class UsuarioRepository {
     
     public getUser = ({id, email}: {id?: number, email?: string}): Promise<IUsuario | null> => {
         const whereClause = id ? { id } : email ? { email } : null;
+        console.log('whereClause =', whereClause);
         return whereClause ? userRepository.findOne({ where: whereClause }) : Promise.resolve(null);
     };
     
     public createNewUser = (user: IUsuario) => {
-        const newUser = userRepository.create({
-            nome: user.nome,
-            cpf: user.cpf,
-            senha: user.senha,
-            empresa: user.empresa,
-            cargo: user.cargo
-        } as DeepPartial<Usuario>);
-
+        const newUser = userRepository.create(user as DeepPartial<Usuario>);
         return userRepository.save(newUser);
+    };
+
+    public updateUser = (user: IUsuario) => {
+        return userRepository.save(user as DeepPartial<Usuario>);
+    };
+
+    public deleteUser = (id: number) => {
+        return userRepository.delete(id);
     };
 }
 

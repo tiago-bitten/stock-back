@@ -17,7 +17,7 @@ class Produto {
     @Column('varchar', { length: 150, nullable: false })
     descricao: string;
 
-    @Column('int', { nullable: false })
+    @Column('float', { nullable: false })
     custo: number;
 
     @Column('float', { nullable: false })

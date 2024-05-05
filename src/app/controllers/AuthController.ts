@@ -13,9 +13,11 @@ class AuthController {
             return res.status(400).json({ message: 'Email and password are required!' });
         }
 
-        const user = await userRepository.getUser(email);
+        const user = await userRepository.getUser({email});
 
-        if (!user || !user.senha) {
+        console.log('user =', user)
+
+        if (!user || user.senha == null) {
             return res.status(404).json({ message: 'User not found!' });
         }
 

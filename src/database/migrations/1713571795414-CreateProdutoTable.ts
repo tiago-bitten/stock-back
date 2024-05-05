@@ -25,7 +25,7 @@ export class CreateProdutoTable1713571795414 implements MigrationInterface {
                     },
                     {
                         name: 'custo',
-                        type: 'int',
+                        type: 'float',
                     },
                     {
                         name: 'preco',

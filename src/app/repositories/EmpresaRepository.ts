@@ -16,16 +16,16 @@ class EmpresaRepository {
     }
 
     public createNewCompany = (company: IEmpresa) => {
-        const newCompany = empresaRepository.create({
-            descricao: company.descricao,
-            cnpj: company.cnpj,
-            telefone: company.telefone,
-            logradouro: company.logradouro,
-            cidade: company.cidade,
-            ativo: company.ativo
-        } as DeepPartial<Empresa>);
-
+        const newCompany = empresaRepository.create(company as DeepPartial<Empresa>);
         return empresaRepository.save(newCompany);
+    }
+
+    public updateCompany = (company: IEmpresa) => {
+        return empresaRepository.save(company as DeepPartial<Empresa>);
+    }
+
+    public deleteCompany = (id: number) => {
+        return empresaRepository.delete(id);
     }
 }
 
