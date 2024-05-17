@@ -12,7 +12,6 @@ class UsuarioRepository {
     
     public getUser = ({id, email}: {id?: number, email?: string}): Promise<IUsuario | null> => {
         const whereClause = id ? { id } : email ? { email } : null;
-        console.log('whereClause =', whereClause);
         return whereClause ? userRepository.findOne({ where: whereClause }) : Promise.resolve(null);
     };
     

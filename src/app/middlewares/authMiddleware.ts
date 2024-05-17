@@ -24,7 +24,7 @@ export default function authMiddleware () {
         const [scheme, token] = parts;
 
         if (!/^Bearer$/i.test(scheme)) {
-            return res.status(401).json({ error: 'Token malformatted' });
+            return res.status(401).json({ error: 'Token malformed' });
         }
 
         try {

@@ -1,12 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import UsuarioRepository from '../repositories/UsuarioRepository';
 import EmpresaRepository from '../repositories/EmpresaRepository';
+import IUsuario from '../interfaces/IUsuario';
 
 class UsuarioController {
 
     public getUsers = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const users = await UsuarioRepository.getUsers();
+            const users: IUsuario[] = await UsuarioRepository.getUsers();
+
+            users.map(u => { delete u.senha; });
 
             return res.status(200).send({
                 users

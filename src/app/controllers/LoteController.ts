@@ -21,9 +21,9 @@ class LoteController {
 
     public storeLote = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const { data, estoque, produto } = req.body;
+            const { data, estoque, empresa } = req.body;
 
-            if (!data || !estoque || !produto) {
+            if (!data || !estoque || !empresa) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
