@@ -4,6 +4,14 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import { GLOBAL_URL } from '../../env';
+import { verify } from 'jsonwebtoken';
+
+interface TokenPayload {
+    id: string;
+    iat: number;
+    exp: number;
+}
+
 class AuthController {
 
     public authenticate = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
@@ -21,7 +29,7 @@ class AuthController {
             return res.status(404).json({ message: 'User not found!' });
         }
 
-        const isValidPassword = bcrypt.compare(senha, user.senha);
+        const isValidPassword = await bcrypt.compare(senha, user.senha);
 
         if (!isValidPassword) {
             return res.status(401).json({ message: 'Invalid password!' });
@@ -45,7 +53,7 @@ class AuthController {
     public forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         const userRepository = UserRepository;    
 
-        const { email, senha } = req.body;
+        const { email } = req.body;
 
         if (!email) {
             return res.status(400).json({ message: 'Please, provide an email!' });
@@ -102,6 +110,50 @@ class AuthController {
         return res.status(200).json({
             message: 'A link to reset your password has been sent to your email!'
         });
+    };
+
+    public resetPassword = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const userRepository = UserRepository;
+            
+            const { senha } = req.body;
+
+            if (!senha) {
+                return res.status(400).json({ message: 'Please, provide a password!' });
+            }
+
+            const resetToken = req.query.token as string;
+
+            if (!resetToken) {
+                return res.status(400).json({ message: 'Token not provided!' });
+            }
+
+            const decoded = verify(resetToken, 'SECRET_KEY') as TokenPayload;
+            const { id } = decoded;
+
+            const user = await userRepository.getUser({ id: parseInt(id) });
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found!' });
+            }
+
+            user.senha = senha;
+
+            const updatedUser = await userRepository.updateUser(user);
+
+            if (!updatedUser) {
+                return res.status(500).json({ message: 'Error updating user password!' });
+            }
+
+            return res.status(200).json({
+                message: 'Password restored with success!'
+            });
+        } catch (error: any) {
+            return res.status(500).json({ 
+                message: 'Internal server error!', 
+                error: error.message 
+            });
+        }
     };
 
 }
