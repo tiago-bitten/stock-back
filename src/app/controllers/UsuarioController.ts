@@ -1,12 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import UsuarioRepository from '../repositories/UsuarioRepository';
 import EmpresaRepository from '../repositories/EmpresaRepository';
+import IUsuario from '../interfaces/IUsuario';
 
 class UsuarioController {
 
     public getUsers = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const users = await UsuarioRepository.getUsers();
+            const users: IUsuario[] = await UsuarioRepository.getUsers();
+
+            users.map(u => { delete u.senha; });
 
             return res.status(200).send({
                 users
@@ -46,9 +49,12 @@ class UsuarioController {
                 { nome, email, senha, cpf, empresa }
             );
 
+            if (!newUser) {
+                return res.status(500).json({ message: 'Error while creating user' });
+            }
+
             return res.status(201).json({
-                message: 'User created successfully',
-                user: newUser
+                message: 'User created successfully'
             });
         } catch (error) {
             return res.status(500).json({ 

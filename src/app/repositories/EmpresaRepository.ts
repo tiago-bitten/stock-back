@@ -1,3 +1,4 @@
+import { DeepPartial } from "typeorm";
 import { AppDataSource } from "../../database/data-source";
 import IEmpresa from "../interfaces/IEmpresa";
 import Empresa from "../models/Empresa";
@@ -15,17 +16,16 @@ class EmpresaRepository {
     }
 
     public createNewCompany = (company: IEmpresa) => {
-        const newCompany = empresaRepository.create({
-            descricao: company.descricao,
-            cnpj: company.cnpj,
-            telefone: company.telefone,
-            contrato: company.contrato,
-            logradouro: company.logradouro,
-            cidade: company.cidade,
-            ativo: company.ativo
-        });
-
+        const newCompany = empresaRepository.create(company as DeepPartial<Empresa>);
         return empresaRepository.save(newCompany);
+    }
+
+    public updateCompany = (company: IEmpresa) => {
+        return empresaRepository.save(company as DeepPartial<Empresa>);
+    }
+
+    public deleteCompany = (id: number) => {
+        return empresaRepository.delete(id);
     }
 }
 

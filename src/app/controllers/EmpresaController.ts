@@ -21,9 +21,9 @@ class EmpresaController {
         try {
             const companyRepository = EmpresaRepository;
 
-            const { descricao, cnpj, telefone, contrato, logradouro, cidade, ativo } = req.body;
+            const { descricao, cnpj, telefone, logradouro, cidade, ativo } = req.body;
 
-            if (!descricao || !cnpj || !telefone || !contrato || !logradouro || !cidade || !ativo) {
+            if (!descricao || !cnpj || !telefone || !logradouro || !cidade || !ativo) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
@@ -34,8 +34,12 @@ class EmpresaController {
             }
 
             const newCompany = await companyRepository.createNewCompany(
-                { descricao, cnpj, telefone, contrato, logradouro, cidade, ativo }
+                { descricao, cnpj, telefone, logradouro, cidade, ativo }
             );
+
+            if (!newCompany) {
+                return res.status(500).json({ message: 'Error while creating company' });
+            }
 
             return res.status(201).json({
                 message: 'Company created successfully',

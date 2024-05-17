@@ -10,9 +10,10 @@ export const AppDataSource = new DataSource({
     username: 'root',
     password: '',
     database: 'stocksense',
-    synchronize: false, // Setar pra true só na hora de criar as tabelas
+    synchronize: false,
     logging: false,
     entities: entities,
     migrations: migrations,
+    migrationsRun: true,
     subscribers: []
 });

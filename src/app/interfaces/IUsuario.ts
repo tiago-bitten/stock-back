@@ -1,9 +1,14 @@
+import ICargo from "./ICargo";
+import IEmpresa from "./IEmpresa";
+
 export default interface IUsuario {
     id?: number,
-    empresa?: number,
+    empresa: number | IEmpresa,
     nome: string,
     email: string,
     cpf: string,
     senha?: string,
-    cargo?: number
+    cargo?: number | ICargo,
+    createdAt?: Date,
+    updatedAt?: Date
 }
