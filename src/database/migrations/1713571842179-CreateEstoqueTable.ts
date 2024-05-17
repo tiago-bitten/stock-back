@@ -3,13 +3,14 @@ import { MigrationInterface, QueryRunner, Table } from "typeorm";
 export class CreateEstoqueTable1713571842179 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.createTable(
+        await queryRunner.createTable(
             new Table({
                 name: 'estoque',
                 columns: [
                     {
                         name: 'empresa',
                         type: 'int',
+                        isPrimary: true,
                     },
                     {
                         name: 'id',
@@ -26,10 +27,13 @@ export class CreateEstoqueTable1713571842179 implements MigrationInterface {
                     {
                         name: 'created_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
                     },
                     {
                         name: 'updated_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
+                        onUpdate: 'CURRENT_TIMESTAMP',
                     },
                 ],
                 foreignKeys: [
@@ -47,7 +51,7 @@ export class CreateEstoqueTable1713571842179 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.dropTable('estoque');
+        await queryRunner.dropTable('estoque');
     }
 
 }

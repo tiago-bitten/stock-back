@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import EmpresaRepository from '../repositories/EmpresaRepository';
+import UsuarioRepository from '../repositories/UsuarioRepository';
 
 class EmpresaController {
     public getCompanies = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
@@ -21,7 +22,7 @@ class EmpresaController {
         try {
             const companyRepository = EmpresaRepository;
 
-            const { descricao, cnpj, telefone, logradouro, cidade, ativo } = req.body;
+            const { descricao, cnpj, telefone, logradouro, cidade, ativo, usuario } = req.body;
 
             if (!descricao || !cnpj || !telefone || !logradouro || !cidade || !ativo) {
                 return res.status(400).json({ message: 'Missing required fields' });
@@ -39,6 +40,18 @@ class EmpresaController {
 
             if (!newCompany) {
                 return res.status(500).json({ message: 'Error while creating company' });
+            }
+
+            if (usuario) {
+                const userRepository = UsuarioRepository;
+
+                const userExists = await userRepository.getUser({id: usuario});
+
+                if (!userExists) {
+                    return res.status(500).json({ message: 'Error while adding user to company' });
+                }
+
+                userRepository.updateUser({ ...userExists, empresa: newCompany.id });
             }
 
             return res.status(201).json({

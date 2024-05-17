@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner, Table } from "typeorm";
 export class CreateUsuarioTable1713571917627 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.createTable(
+        await queryRunner.createTable(
             new Table({
                 name: 'usuario',
                 columns: [
@@ -17,6 +17,7 @@ export class CreateUsuarioTable1713571917627 implements MigrationInterface {
                     {
                         name: 'empresa',
                         type: 'int',
+                        isPrimary: true,
                     },
                     {
                         name: 'nome',
@@ -47,10 +48,13 @@ export class CreateUsuarioTable1713571917627 implements MigrationInterface {
                     {
                         name: 'created_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
                     },
                     {
                         name: 'updated_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
+                        onUpdate: 'CURRENT_TIMESTAMP',
                     },
                 ],
                 foreignKeys: [
@@ -76,7 +80,7 @@ export class CreateUsuarioTable1713571917627 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.dropTable('usuario');
+        await queryRunner.dropTable('usuario');
     }
 
 }

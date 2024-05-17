@@ -11,6 +11,8 @@ class UsuarioController {
 
             users.map(u => { delete u.senha; });
 
+            console.log(users.map(u=>u.empresa))
+
             return res.status(200).send({
                 users
             });
@@ -27,9 +29,9 @@ class UsuarioController {
             const userRepository = UsuarioRepository;
             const empresaRepository = EmpresaRepository;
 
-            const { nome, email, senha, cpf, empresa } = req.body;
+            const { nome, email, senha, cpf } = req.body;
 
-            if (!nome || !email || !senha || !cpf || !empresa) {
+            if (!nome || !email || !senha || !cpf) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
@@ -39,14 +41,8 @@ class UsuarioController {
                 return res.status(409).json({ message: 'User already exists' });
             }
 
-            const companyExists = await empresaRepository.getCompany({id: empresa});
-
-            if (companyExists == null) {
-                return res.status(404).json({ message: 'Company not found, please, request an invite from an admin' });
-            }
-
             const newUser = await userRepository.createNewUser(
-                { nome, email, senha, cpf, empresa }
+                { nome, email, senha, cpf }
             );
 
             if (!newUser) {

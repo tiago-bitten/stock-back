@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner, Table } from "typeorm";
 export class CreateCargoTable1713571910820 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.createTable(
+        await queryRunner.createTable(
             new Table({
                 name: 'cargo',
                 columns: [
@@ -17,6 +17,7 @@ export class CreateCargoTable1713571910820 implements MigrationInterface {
                     {
                         name: 'empresa',
                         type: 'int',
+                        isPrimary: true,
                     },
                     {
                         name: 'descricao',
@@ -26,10 +27,13 @@ export class CreateCargoTable1713571910820 implements MigrationInterface {
                     {
                         name: 'created_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
                     },
                     {
                         name: 'updated_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
+                        onUpdate: 'CURRENT_TIMESTAMP',
                     },
                 ],
                 foreignKeys: [
@@ -45,7 +49,7 @@ export class CreateCargoTable1713571910820 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.dropTable('cargo');
+        await queryRunner.dropTable('cargo');
     }
 
 }

@@ -3,13 +3,14 @@ import { MigrationInterface, QueryRunner, Table } from "typeorm";
 export class CreateFornecedorProdutoTable1713571832453 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.createTable(
+        await queryRunner.createTable(
             new Table({
                 name: 'fornecedor_produto',
                 columns: [
                     {
                         name: 'empresa',
                         type: 'int',
+                        isPrimary: true,
                     },
                     {
                         name: 'id',
@@ -21,10 +22,13 @@ export class CreateFornecedorProdutoTable1713571832453 implements MigrationInter
                     {
                         name: 'created_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
                     },
                     {
                         name: 'updated_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
+                        onUpdate: 'CURRENT_TIMESTAMP',
                     },
                     {
                         name: 'fornecedor',
@@ -66,6 +70,6 @@ export class CreateFornecedorProdutoTable1713571832453 implements MigrationInter
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.dropTable('fornecedor_produto');
+        await queryRunner.dropTable('fornecedor_produto');
     }
 }

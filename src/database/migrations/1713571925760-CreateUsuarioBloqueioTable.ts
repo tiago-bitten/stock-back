@@ -3,13 +3,14 @@ import { MigrationInterface, QueryRunner, Table } from "typeorm";
 export class CreateUsuarioBloqueioTable1713571925760 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.createTable(
+        await queryRunner.createTable(
             new Table({
                 name: 'usuario_bloqueio',
                 columns: [
                     {
                         name: 'empresa',
                         type: 'int',
+                        isPrimary: true,
                     },
                     {
                         name: 'id',
@@ -26,10 +27,13 @@ export class CreateUsuarioBloqueioTable1713571925760 implements MigrationInterfa
                     {
                         name: 'created_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
                     },
                     {
                         name: 'updated_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
+                        onUpdate: 'CURRENT_TIMESTAMP',
                     },
                     {
                         name: 'estoque',
@@ -71,7 +75,7 @@ export class CreateUsuarioBloqueioTable1713571925760 implements MigrationInterfa
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.dropTable('usuario_bloqueio');
+        await queryRunner.dropTable('usuario_bloqueio');
     }
 
 }
