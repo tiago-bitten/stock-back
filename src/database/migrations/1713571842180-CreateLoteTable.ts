@@ -7,10 +7,9 @@ export class CreateLoteTable1713571842180 implements MigrationInterface {
             new Table({
                 name: 'lote',
                 columns: [
-                    {
-                        name: 'empresa',
-                        type: 'int',
-                        isPrimary: true,
+{
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'id',
@@ -35,14 +34,14 @@ export class CreateLoteTable1713571842180 implements MigrationInterface {
                         onUpdate: 'CURRENT_TIMESTAMP',
                     },
                     {
-                        name: 'estoque',
+                        name: 'estoqueId',
                         type: 'int',
                     },
                 ],
                 foreignKeys: [
                     {
                         name: 'FKLoteEmpresa',
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'empresa',
                         onDelete: 'CASCADE',
@@ -50,7 +49,7 @@ export class CreateLoteTable1713571842180 implements MigrationInterface {
                     },
                     {
                         name: 'FKLoteEstoque',
-                        columnNames: ['estoque'],
+                        columnNames: ['estoqueId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'estoque',
                         onDelete: 'CASCADE',

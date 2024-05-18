@@ -7,10 +7,9 @@ export class CreateFornecedorTable1713571805444 implements MigrationInterface {
             new Table({
                 name: 'fornecedor',
                 columns: [
-                    {
-                        name: 'empresa',
-                        type: 'int',
-                        isPrimary: true,
+{
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'id',
@@ -65,7 +64,7 @@ export class CreateFornecedorTable1713571805444 implements MigrationInterface {
                         name: 'FKFornecedorEmpresa',
                         referencedTableName: 'empresa',
                         referencedColumnNames: ['id'],
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         onDelete: 'CASCADE',
                         onUpdate: 'CASCADE',
                     },

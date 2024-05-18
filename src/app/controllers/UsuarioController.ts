@@ -11,8 +11,6 @@ class UsuarioController {
 
             users.map(u => { delete u.senha; });
 
-            console.log(users.map(u=>u.empresa))
-
             return res.status(200).send({
                 users
             });
@@ -50,7 +48,8 @@ class UsuarioController {
             }
 
             return res.status(201).json({
-                message: 'User created successfully'
+                message: 'User created successfully',
+                user: newUser.id
             });
         } catch (error) {
             return res.status(500).json({ 

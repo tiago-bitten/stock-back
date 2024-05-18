@@ -29,6 +29,10 @@ class AuthController {
             return res.status(404).json({ message: 'User not found!' });
         }
 
+        if (!user.empresa) {
+            return res.status(401).json({ message: 'User not authorized!' });
+        }
+
         const isValidPassword = await bcrypt.compare(senha, user.senha);
 
         if (!isValidPassword) {

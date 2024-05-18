@@ -12,7 +12,7 @@ class CategoriaRepository {
 
     public getCategory = ({id, descricao}: {id?: number, descricao?: string}): Promise<ICategoria | null> => {
         const whereClause = id ? { id } : descricao ? { descricao } : null;
-        return whereClause ? categoryRepository.findOne({ where: whereClause }) : Promise.resolve(null);
+        return whereClause ? categoryRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
     }
 
     public createNewCategory = (category: ICategoria) => {

@@ -12,7 +12,7 @@ class EntradaRepository extends Entrada {
 
     public getEntrada = ({id, lote, produto, fornecedor}: {id?: number, lote?: number, produto?: number, fornecedor?: number}) => {
         const whereClause = id ? { id } : lote ? { lote } : produto ? { produto } : fornecedor ? { fornecedor } : null;
-        return whereClause ? entradaRepository.findOne({ where: whereClause }) : Promise.resolve(null);
+        return whereClause ? entradaRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
     }
 
     public createNewEntrada = (Entrada: IEntrada) => {

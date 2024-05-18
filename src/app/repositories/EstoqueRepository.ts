@@ -12,7 +12,7 @@ class EstoqueRepository extends Estoque {
 
     public getEstoque = ({id, descricao}: {id?: number, descricao?: string}) => {
         const whereClause = id ? { id } : descricao ? { descricao } : null;
-        return whereClause ? estoqueRepository.findOne({ where: whereClause }) : Promise.resolve(null);
+        return whereClause ? estoqueRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
     }
 
     public createNewEstoque = (Estoque: IEstoque) => {

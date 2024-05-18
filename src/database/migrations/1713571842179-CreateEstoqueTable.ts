@@ -7,10 +7,9 @@ export class CreateEstoqueTable1713571842179 implements MigrationInterface {
             new Table({
                 name: 'estoque',
                 columns: [
-                    {
-                        name: 'empresa',
-                        type: 'int',
-                        isPrimary: true,
+{
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'id',
@@ -39,7 +38,7 @@ export class CreateEstoqueTable1713571842179 implements MigrationInterface {
                 foreignKeys: [
                     {
                         name: 'FKEstoqueEmpresa',
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'empresa',
                         onDelete: 'CASCADE',

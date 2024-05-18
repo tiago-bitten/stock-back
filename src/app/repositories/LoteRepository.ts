@@ -12,7 +12,7 @@ class LoteRepository extends Lote {
 
     public getLote = ({id, data}: {id?: number, data?: Date}) => {
         const whereClause = id ? { id } : data ? { data } : null;
-        return whereClause ? loteRepository.findOne({ where: whereClause }) : Promise.resolve(null);
+        return whereClause ? loteRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
     }
 
     public createNewLote = (lote: ILote) => {

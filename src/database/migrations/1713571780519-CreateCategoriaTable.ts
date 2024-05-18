@@ -8,9 +8,8 @@ export class CreateCategoriaTable1713571780519 implements MigrationInterface {
                 name: 'categoria',
                 columns: [
                     {
-                        name: 'empresa',
-                        type: 'int',
-                        isPrimary: true,
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'id',
@@ -39,7 +38,7 @@ export class CreateCategoriaTable1713571780519 implements MigrationInterface {
                 foreignKeys: [
                     {
                         name: 'FKCategoriaEmpresa',
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'empresa',
                         onDelete: 'CASCADE',

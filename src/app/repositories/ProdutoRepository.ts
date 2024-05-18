@@ -12,7 +12,7 @@ class ProdutoRepository {
 
     public getProduct = ({id, descricao}: {id?: number, descricao?: string}): Promise<IProduto | null> => {
         const whereClause = id ? { id } : descricao ? { descricao } : null;
-        return whereClause ? produtoRepository.findOne({ where: whereClause }) : Promise.resolve(null);
+        return whereClause ? produtoRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
     }
 
     public createNewProduct = (product: IProduto) => {

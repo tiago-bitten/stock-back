@@ -14,10 +14,9 @@ export class CreateCargoTable1713571910820 implements MigrationInterface {
                         isGenerated: true,
                         generationStrategy: 'increment',
                     },
-                    {
-                        name: 'empresa',
-                        type: 'int',
-                        isPrimary: true,
+{
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'descricao',
@@ -41,7 +40,7 @@ export class CreateCargoTable1713571910820 implements MigrationInterface {
                         name: 'FKCargoEmpresa',
                         referencedTableName: 'empresa',
                         referencedColumnNames: ['id'],
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                     },
                 ],
             }),

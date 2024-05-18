@@ -12,7 +12,7 @@ class EmpresaRepository {
 
     public getCompany = ({ cnpj, id }: { cnpj?: string; id?: number }): Promise<IEmpresa | null> => {
         const whereClause = cnpj ? { cnpj } : id ? { id } : null;
-        return whereClause ? empresaRepository.findOne({ where: whereClause }) : Promise.resolve(null);
+        return whereClause ? empresaRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
     }
 
     public createNewCompany = (company: IEmpresa) => {

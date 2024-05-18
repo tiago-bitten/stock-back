@@ -15,9 +15,9 @@ export class CreateUsuarioTable1713571917627 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'empresa',
+                        name: 'empresaId',
                         type: 'int',
-                        isPrimary: true,
+                        isNullable: true
                     },
                     {
                         name: 'nome',
@@ -42,8 +42,9 @@ export class CreateUsuarioTable1713571917627 implements MigrationInterface {
                         length: '60',
                     },
                     {
-                        name: 'cargo',
+                        name: 'cargoId',
                         type: 'int',
+                        isNullable: true
                     },
                     {
                         name: 'created_at',
@@ -62,7 +63,7 @@ export class CreateUsuarioTable1713571917627 implements MigrationInterface {
                         name: 'FKUsuarioEmpresa',
                         referencedTableName: 'empresa',
                         referencedColumnNames: ['id'],
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         onDelete: 'CASCADE',
                         onUpdate: 'CASCADE',
                     },
@@ -70,7 +71,7 @@ export class CreateUsuarioTable1713571917627 implements MigrationInterface {
                         name: 'FKUsuarioCargo',
                         referencedTableName: 'cargo',
                         referencedColumnNames: ['id'],
-                        columnNames: ['cargo'],
+                        columnNames: ['cargoId'],
                         onDelete: 'CASCADE',
                         onUpdate: 'CASCADE',
                     },

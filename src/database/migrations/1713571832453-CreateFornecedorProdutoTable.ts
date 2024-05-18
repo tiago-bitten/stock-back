@@ -7,10 +7,9 @@ export class CreateFornecedorProdutoTable1713571832453 implements MigrationInter
             new Table({
                 name: 'fornecedor_produto',
                 columns: [
-                    {
-                        name: 'empresa',
-                        type: 'int',
-                        isPrimary: true,
+{
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'id',
@@ -31,18 +30,18 @@ export class CreateFornecedorProdutoTable1713571832453 implements MigrationInter
                         onUpdate: 'CURRENT_TIMESTAMP',
                     },
                     {
-                        name: 'fornecedor',
+                        name: 'fornecedorId',
                         type: 'int',
                     },
                     {
-                        name: 'produto',
+                        name: 'produtoId',
                         type: 'int',
                     },
                 ],
                 foreignKeys: [
                     {
                         name: 'FKFornecedorProdutoEmpresa',
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'empresa',
                         onDelete: 'CASCADE',
@@ -50,7 +49,7 @@ export class CreateFornecedorProdutoTable1713571832453 implements MigrationInter
                     },
                     {
                         name: 'FKFornecedorProdutoFornecedor',
-                        columnNames: ['fornecedor'],
+                        columnNames: ['fornecedorId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'fornecedor',
                         onDelete: 'CASCADE',
@@ -58,7 +57,7 @@ export class CreateFornecedorProdutoTable1713571832453 implements MigrationInter
                     },
                     {
                         name: 'FKFornecedorProdutoProduto',
-                        columnNames: ['produto'],
+                        columnNames: ['produtoId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'produto',
                         onDelete: 'CASCADE',

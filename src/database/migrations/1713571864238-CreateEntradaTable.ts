@@ -7,10 +7,9 @@ export class CreateEntradaTable1713571864238 implements MigrationInterface {
             new Table({
                 name: 'entrada',
                 columns: [
-                    {
-                        name: 'empresa',
-                        type: 'int',
-                        isPrimary: true,
+{
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'id',
@@ -36,22 +35,22 @@ export class CreateEntradaTable1713571864238 implements MigrationInterface {
                         onUpdate: 'CURRENT_TIMESTAMP',
                     },
                     {
-                        name: 'lote',
+                        name: 'loteId',
                         type: 'int',
                     },
                     {
-                        name: 'produto',
+                        name: 'produtoId',
                         type: 'int',
                     },
                     {
-                        name: 'fornecedor',
+                        name: 'fornecedorId',
                         type: 'int',
                     },
                 ],
                 foreignKeys: [
                     {
                         name: 'FKEntradaEmpresa',
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'empresa',
                         onDelete: 'CASCADE',
@@ -59,7 +58,7 @@ export class CreateEntradaTable1713571864238 implements MigrationInterface {
                     },
                     {
                         name: 'FKEntradaLote',
-                        columnNames: ['lote'],
+                        columnNames: ['loteId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'lote',
                         onDelete: 'CASCADE',
@@ -67,7 +66,7 @@ export class CreateEntradaTable1713571864238 implements MigrationInterface {
                     },
                     {
                         name: 'FKEntradaProduto',
-                        columnNames: ['produto'],
+                        columnNames: ['produtoId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'produto',
                         onDelete: 'CASCADE',
@@ -75,7 +74,7 @@ export class CreateEntradaTable1713571864238 implements MigrationInterface {
                     },
                     {
                         name: 'FKEntradaFornecedor',
-                        columnNames: ['fornecedor'],
+                        columnNames: ['fornecedorId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'fornecedor',
                         onDelete: 'CASCADE',

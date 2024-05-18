@@ -12,7 +12,7 @@ class UsuarioRepository {
     
     public getUser = ({id, email}: {id?: number, email?: string}): Promise<IUsuario | null> => {
         const whereClause = id ? { id } : email ? { email } : null;
-        return whereClause ? userRepository.findOne({ where: whereClause }) : Promise.resolve(null);
+        return whereClause ? userRepository.findOne({ where: whereClause, relations: ['empresa', 'cargo'] }) : Promise.resolve(null);
     };
     
     public createNewUser = (user: IUsuario) => {

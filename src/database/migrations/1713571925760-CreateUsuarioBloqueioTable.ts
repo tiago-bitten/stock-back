@@ -7,10 +7,9 @@ export class CreateUsuarioBloqueioTable1713571925760 implements MigrationInterfa
             new Table({
                 name: 'usuario_bloqueio',
                 columns: [
-                    {
-                        name: 'empresa',
-                        type: 'int',
-                        isPrimary: true,
+{
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'id',
@@ -36,18 +35,18 @@ export class CreateUsuarioBloqueioTable1713571925760 implements MigrationInterfa
                         onUpdate: 'CURRENT_TIMESTAMP',
                     },
                     {
-                        name: 'estoque',
+                        name: 'estoqueId',
                         type: 'int',
                     },
                     {
-                        name: 'usuario',
+                        name: 'usuarioId',
                         type: 'int',
                     },
                 ],
                 foreignKeys: [
                     {
                         name: 'FKUsuarioBloqueioEmpresa',
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'empresa',
                         onDelete: 'CASCADE',
@@ -55,7 +54,7 @@ export class CreateUsuarioBloqueioTable1713571925760 implements MigrationInterfa
                     },
                     {
                         name: 'FKUsuarioBloqueioEstoque',
-                        columnNames: ['estoque'],
+                        columnNames: ['estoqueId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'estoque',
                         onDelete: 'CASCADE',
@@ -63,7 +62,7 @@ export class CreateUsuarioBloqueioTable1713571925760 implements MigrationInterfa
                     },
                     {
                         name: 'FKUsuarioBloqueioUsuario',
-                        columnNames: ['usuario'],
+                        columnNames: ['usuarioId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'usuario',
                         onDelete: 'CASCADE',

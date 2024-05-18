@@ -7,10 +7,9 @@ export class CreateProdutoTable1713571795414 implements MigrationInterface {
             new Table({
                 name: 'produto',
                 columns: [
-                    {
-                        name: 'empresa',
-                        type: 'int',
-                        isPrimary: true,
+{
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'id',
@@ -59,7 +58,7 @@ export class CreateProdutoTable1713571795414 implements MigrationInterface {
                 foreignKeys: [
                     {
                         name: 'FKProdutoEmpresa',
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'empresa',
                         onDelete: 'CASCADE',
