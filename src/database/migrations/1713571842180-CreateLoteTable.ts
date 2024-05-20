@@ -7,7 +7,7 @@ export class CreateLoteTable1713571842180 implements MigrationInterface {
             new Table({
                 name: 'lote',
                 columns: [
-{
+                    {
                         name: 'empresaId',
                         type: 'int'
                     },
@@ -19,8 +19,29 @@ export class CreateLoteTable1713571842180 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'data',
+                        name: 'codigoBarras',
+                        type: 'varchar',
+                        isNullable: false,
+                        isUnique: true,
+                    },
+                    {
+                        name: 'quantidade',
+                        type: 'int',
+                        isNullable: false,
+                    },
+                    {
+                        name: 'dataFabricacao',
                         type: 'date',
+                        isNullable: false,
+                    },
+                    {
+                        name: 'dataVencimento',
+                        type: 'date',
+                        isNullable: false,
+                    },
+                    {
+                        name: 'observacoes',
+                        type: 'varchar'
                     },
                     {
                         name: 'created_at',
@@ -34,7 +55,7 @@ export class CreateLoteTable1713571842180 implements MigrationInterface {
                         onUpdate: 'CURRENT_TIMESTAMP',
                     },
                     {
-                        name: 'estoqueId',
+                        name: 'produtoId',
                         type: 'int',
                     },
                 ],
@@ -48,10 +69,10 @@ export class CreateLoteTable1713571842180 implements MigrationInterface {
                         onUpdate: 'CASCADE',
                     },
                     {
-                        name: 'FKLoteEstoque',
-                        columnNames: ['estoqueId'],
+                        name: 'FKLoteProduto',
+                        columnNames: ['produtoId'],
                         referencedColumnNames: ['id'],
-                        referencedTableName: 'estoque',
+                        referencedTableName: 'produto',
                         onDelete: 'CASCADE',
                         onUpdate: 'CASCADE',
                     },

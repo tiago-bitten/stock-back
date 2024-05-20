@@ -54,6 +54,10 @@ export class CreateProdutoTable1713571795414 implements MigrationInterface {
                         default: 'CURRENT_TIMESTAMP',
                         onUpdate: 'CURRENT_TIMESTAMP',
                     },
+                    {
+                        name: 'categoriaId',
+                        type: 'int',
+                    }
                 ],
                 foreignKeys: [
                     {
@@ -64,6 +68,14 @@ export class CreateProdutoTable1713571795414 implements MigrationInterface {
                         onDelete: 'CASCADE',
                         onUpdate: 'CASCADE',
                     },
+                    {
+                        name: 'FKProdutoCategoria',
+                        columnNames: ['categoriaId'],
+                        referencedColumnNames: ['id'],
+                        referencedTableName: 'categoria',
+                        onDelete: 'CASCADE',
+                        onUpdate: 'CASCADE',
+                    }
                 ],
             }),
         );

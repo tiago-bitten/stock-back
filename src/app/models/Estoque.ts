@@ -1,6 +1,5 @@
 import { Entity, Column, Index, CreateDateColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import Empresa from './Empresa';
-import Lote from './Lote';
 import UsuarioBloqueio from './UsuarioBloqueio';
 
 @Entity('estoque')
@@ -20,9 +19,6 @@ class Estoque {
 
     @CreateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
-
-    @OneToMany(() => Lote, (lote) => lote.estoque)
-    lote: Lote[];
 
     @OneToMany(() => UsuarioBloqueio, (usuarioBloqueio) => usuarioBloqueio.estoque)
     usuarioBloqueio: UsuarioBloqueio[];

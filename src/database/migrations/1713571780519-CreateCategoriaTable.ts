@@ -33,7 +33,7 @@ export class CreateCategoriaTable1713571780519 implements MigrationInterface {
                         type: 'timestamp',
                         default: 'CURRENT_TIMESTAMP',
                         onUpdate: 'CURRENT_TIMESTAMP',
-                    },
+                    }
                 ],
                 foreignKeys: [
                     {
