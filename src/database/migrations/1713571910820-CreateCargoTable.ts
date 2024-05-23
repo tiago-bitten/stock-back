@@ -24,6 +24,16 @@ export class CreateCargoTable1713571910820 implements MigrationInterface {
                         length: '150',
                     },
                     {
+                        name: 'nivel',
+                        type: 'enum',
+                        isNullable: false,
+                        enumName: 'nivel_enum',
+                        enum: [
+                            'Admin',
+                            'Funcionario',
+                        ]
+                    },
+                    {
                         name: 'created_at',
                         type: 'timestamp',
                         default: 'CURRENT_TIMESTAMP',

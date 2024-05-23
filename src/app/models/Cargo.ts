@@ -1,4 +1,4 @@
-import { Entity, Column, Index, CreateDateColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, Index, CreateDateColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Check } from 'typeorm';
 import Empresa from './Empresa';
 import Usuario from './Usuario';
 
@@ -13,6 +13,9 @@ class Cargo {
 
     @Column('varchar', { length: 150, nullable: false })
     descricao: string;
+
+    @Column('enum', { enum: ['Admin', 'Funcionario'], default: 'Funcionario' }) // Use enum type for nivel
+    nivel: 'Admin' | 'Funcionario';
     
     @OneToMany(() => Usuario, (usuario) => usuario.cargo)
     usuario: Usuario[];
