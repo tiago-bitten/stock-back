@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner, Table } from "typeorm";
 export class CreateUsuarioTable1713571917627 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.createTable(
+        await queryRunner.createTable(
             new Table({
                 name: 'usuario',
                 columns: [
@@ -15,8 +15,9 @@ export class CreateUsuarioTable1713571917627 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'empresa',
+                        name: 'empresaId',
                         type: 'int',
+                        isNullable: true
                     },
                     {
                         name: 'nome',
@@ -41,16 +42,20 @@ export class CreateUsuarioTable1713571917627 implements MigrationInterface {
                         length: '60',
                     },
                     {
-                        name: 'cargo',
+                        name: 'cargoId',
                         type: 'int',
+                        isNullable: true
                     },
                     {
                         name: 'created_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
                     },
                     {
                         name: 'updated_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
+                        onUpdate: 'CURRENT_TIMESTAMP',
                     },
                 ],
                 foreignKeys: [
@@ -58,7 +63,7 @@ export class CreateUsuarioTable1713571917627 implements MigrationInterface {
                         name: 'FKUsuarioEmpresa',
                         referencedTableName: 'empresa',
                         referencedColumnNames: ['id'],
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         onDelete: 'CASCADE',
                         onUpdate: 'CASCADE',
                     },
@@ -66,7 +71,7 @@ export class CreateUsuarioTable1713571917627 implements MigrationInterface {
                         name: 'FKUsuarioCargo',
                         referencedTableName: 'cargo',
                         referencedColumnNames: ['id'],
-                        columnNames: ['cargo'],
+                        columnNames: ['cargoId'],
                         onDelete: 'CASCADE',
                         onUpdate: 'CASCADE',
                     },
@@ -76,7 +81,7 @@ export class CreateUsuarioTable1713571917627 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.dropTable('usuario');
+        await queryRunner.dropTable('usuario');
     }
 
 }

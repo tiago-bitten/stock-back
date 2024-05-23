@@ -3,13 +3,13 @@ import { MigrationInterface, QueryRunner, Table } from "typeorm";
 export class CreateProdutoTable1713571795414 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.createTable(
+        await queryRunner.createTable(
             new Table({
                 name: 'produto',
                 columns: [
-                    {
-                        name: 'empresa',
-                        type: 'int',
+{
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'id',
@@ -46,28 +46,43 @@ export class CreateProdutoTable1713571795414 implements MigrationInterface {
                     {
                         name: 'created_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
                     },
                     {
                         name: 'updated_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
+                        onUpdate: 'CURRENT_TIMESTAMP',
                     },
+                    {
+                        name: 'categoriaId',
+                        type: 'int',
+                    }
                 ],
                 foreignKeys: [
                     {
                         name: 'FKProdutoEmpresa',
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'empresa',
                         onDelete: 'CASCADE',
                         onUpdate: 'CASCADE',
                     },
+                    {
+                        name: 'FKProdutoCategoria',
+                        columnNames: ['categoriaId'],
+                        referencedColumnNames: ['id'],
+                        referencedTableName: 'categoria',
+                        onDelete: 'CASCADE',
+                        onUpdate: 'CASCADE',
+                    }
                 ],
             }),
         );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.dropTable('produto');
+        await queryRunner.dropTable('produto');
     }
 
 }

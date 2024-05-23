@@ -4,6 +4,7 @@ import Entrada from './Entrada';
 import FornecedorProduto from './FornecedorProduto';
 import Categoria from './Categoria';
 import Saida from './Saida';
+import Lote from './Lote';
 
 @Entity('produto')
 @Index(["empresa", "id"], { unique: true })
@@ -37,6 +38,9 @@ class Produto {
 
     @CreateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
+
+    @OneToMany(() => Lote, (lote) => lote.produto)
+    lote: Lote[]
 
     @OneToMany(() => Entrada, (entrada) => entrada.produto)
     entrada: Entrada[]

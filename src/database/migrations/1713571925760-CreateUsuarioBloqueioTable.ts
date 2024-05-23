@@ -3,13 +3,13 @@ import { MigrationInterface, QueryRunner, Table } from "typeorm";
 export class CreateUsuarioBloqueioTable1713571925760 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.createTable(
+        await queryRunner.createTable(
             new Table({
                 name: 'usuario_bloqueio',
                 columns: [
-                    {
-                        name: 'empresa',
-                        type: 'int',
+{
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'id',
@@ -26,24 +26,27 @@ export class CreateUsuarioBloqueioTable1713571925760 implements MigrationInterfa
                     {
                         name: 'created_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
                     },
                     {
                         name: 'updated_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
+                        onUpdate: 'CURRENT_TIMESTAMP',
                     },
                     {
-                        name: 'estoque',
+                        name: 'estoqueId',
                         type: 'int',
                     },
                     {
-                        name: 'usuario',
+                        name: 'usuarioId',
                         type: 'int',
                     },
                 ],
                 foreignKeys: [
                     {
                         name: 'FKUsuarioBloqueioEmpresa',
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'empresa',
                         onDelete: 'CASCADE',
@@ -51,7 +54,7 @@ export class CreateUsuarioBloqueioTable1713571925760 implements MigrationInterfa
                     },
                     {
                         name: 'FKUsuarioBloqueioEstoque',
-                        columnNames: ['estoque'],
+                        columnNames: ['estoqueId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'estoque',
                         onDelete: 'CASCADE',
@@ -59,7 +62,7 @@ export class CreateUsuarioBloqueioTable1713571925760 implements MigrationInterfa
                     },
                     {
                         name: 'FKUsuarioBloqueioUsuario',
-                        columnNames: ['usuario'],
+                        columnNames: ['usuarioId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'usuario',
                         onDelete: 'CASCADE',
@@ -71,7 +74,7 @@ export class CreateUsuarioBloqueioTable1713571925760 implements MigrationInterfa
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.dropTable('usuario_bloqueio');
+        await queryRunner.dropTable('usuario_bloqueio');
     }
 
 }

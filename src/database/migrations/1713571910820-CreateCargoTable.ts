@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner, Table } from "typeorm";
 export class CreateCargoTable1713571910820 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.createTable(
+        await queryRunner.createTable(
             new Table({
                 name: 'cargo',
                 columns: [
@@ -14,9 +14,9 @@ export class CreateCargoTable1713571910820 implements MigrationInterface {
                         isGenerated: true,
                         generationStrategy: 'increment',
                     },
-                    {
-                        name: 'empresa',
-                        type: 'int',
+{
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'descricao',
@@ -24,12 +24,25 @@ export class CreateCargoTable1713571910820 implements MigrationInterface {
                         length: '150',
                     },
                     {
+                        name: 'nivel',
+                        type: 'enum',
+                        isNullable: false,
+                        enumName: 'nivel_enum',
+                        enum: [
+                            'Admin',
+                            'Funcionario',
+                        ]
+                    },
+                    {
                         name: 'created_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
                     },
                     {
                         name: 'updated_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
+                        onUpdate: 'CURRENT_TIMESTAMP',
                     },
                 ],
                 foreignKeys: [
@@ -37,7 +50,7 @@ export class CreateCargoTable1713571910820 implements MigrationInterface {
                         name: 'FKCargoEmpresa',
                         referencedTableName: 'empresa',
                         referencedColumnNames: ['id'],
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                     },
                 ],
             }),
@@ -45,7 +58,7 @@ export class CreateCargoTable1713571910820 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.dropTable('cargo');
+        await queryRunner.dropTable('cargo');
     }
 
 }

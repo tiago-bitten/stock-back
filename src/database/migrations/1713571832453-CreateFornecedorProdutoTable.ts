@@ -3,13 +3,13 @@ import { MigrationInterface, QueryRunner, Table } from "typeorm";
 export class CreateFornecedorProdutoTable1713571832453 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.createTable(
+        await queryRunner.createTable(
             new Table({
                 name: 'fornecedor_produto',
                 columns: [
-                    {
-                        name: 'empresa',
-                        type: 'int',
+{
+                        name: 'empresaId',
+                        type: 'int'
                     },
                     {
                         name: 'id',
@@ -21,24 +21,27 @@ export class CreateFornecedorProdutoTable1713571832453 implements MigrationInter
                     {
                         name: 'created_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
                     },
                     {
                         name: 'updated_at',
                         type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP',
+                        onUpdate: 'CURRENT_TIMESTAMP',
                     },
                     {
-                        name: 'fornecedor',
+                        name: 'fornecedorId',
                         type: 'int',
                     },
                     {
-                        name: 'produto',
+                        name: 'produtoId',
                         type: 'int',
                     },
                 ],
                 foreignKeys: [
                     {
                         name: 'FKFornecedorProdutoEmpresa',
-                        columnNames: ['empresa'],
+                        columnNames: ['empresaId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'empresa',
                         onDelete: 'CASCADE',
@@ -46,7 +49,7 @@ export class CreateFornecedorProdutoTable1713571832453 implements MigrationInter
                     },
                     {
                         name: 'FKFornecedorProdutoFornecedor',
-                        columnNames: ['fornecedor'],
+                        columnNames: ['fornecedorId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'fornecedor',
                         onDelete: 'CASCADE',
@@ -54,7 +57,7 @@ export class CreateFornecedorProdutoTable1713571832453 implements MigrationInter
                     },
                     {
                         name: 'FKFornecedorProdutoProduto',
-                        columnNames: ['produto'],
+                        columnNames: ['produtoId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'produto',
                         onDelete: 'CASCADE',
@@ -66,6 +69,6 @@ export class CreateFornecedorProdutoTable1713571832453 implements MigrationInter
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.dropTable('fornecedor_produto');
+        await queryRunner.dropTable('fornecedor_produto');
     }
 }
