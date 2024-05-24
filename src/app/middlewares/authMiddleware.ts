@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
+import UsuarioRepository from '../repositories/UsuarioRepository';
 
 interface TokenPayload {
     id: string;
@@ -29,10 +30,16 @@ export default function authMiddleware () {
 
         try {
             const decoded = verify(token, 'SECRET_KEY');
-
             const { id } = decoded as TokenPayload;
 
             req.userId = id;
+
+            const userRole = await UsuarioRepository.getUserRole(parseInt(req.userId));
+            const url = req.originalUrl.split('/');
+
+            if (url[1] === 'usuario' && userRole !== 'ADMIN') {
+                return res.status(401).json({ error: 'User access unauthorized!' });
+            }
 
             return next();
         } catch {

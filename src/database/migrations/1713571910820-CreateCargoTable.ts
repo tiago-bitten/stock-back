@@ -29,8 +29,8 @@ export class CreateCargoTable1713571910820 implements MigrationInterface {
                         isNullable: false,
                         enumName: 'nivel_enum',
                         enum: [
-                            'Admin',
-                            'Funcionario',
+                            'ADMIN',
+                            'USER',
                         ]
                     },
                     {

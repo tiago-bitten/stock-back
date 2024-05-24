@@ -15,7 +15,7 @@ class Cargo {
     descricao: string;
 
     @Column('enum', { enum: ['Admin', 'Funcionario'], default: 'Funcionario' }) // Use enum type for nivel
-    nivel: 'Admin' | 'Funcionario';
+    nivel: 'ADMIN' | 'USER';
     
     @OneToMany(() => Usuario, (usuario) => usuario.cargo)
     usuario: Usuario[];
