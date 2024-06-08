@@ -2,30 +2,44 @@ import { DeepPartial } from "typeorm";
 import { AppDataSource } from "../../database/data-source";
 import ICargo from "../interfaces/ICargo";
 import Cargo from "../models/Cargo";
-
-const cargoRepository = AppDataSource.getRepository(Cargo);
-
 class CargoRepository {
-    public getCargos = (): Promise<ICargo[]> => {
-        return cargoRepository.find();
+    private cargoRepository = AppDataSource.getRepository(Cargo);
+
+    public getCargos = (params?: any): Promise<ICargo[]> => {
+        const offset = params.skip ? params.skip : 0;
+        const empresa = params.empresa;
+
+        return this.cargoRepository
+            .createQueryBuilder('cargo')
+            .innerJoin('cargo.empresa', 'empresa')
+            .select('cargo')
+            .addSelect('empresa')
+            .where('empresa.id = :empresa', { empresa })
+            .skip(offset)
+            .take(50)
+            .getMany();
     }
 
-    public getCargo = ({id, descricao}: {id?: number, descricao?: string}): Promise<ICargo | null> => {
-        const whereClause = id ? { id } : descricao ? { descricao } : null;
-        return whereClause ? cargoRepository.findOne({ where: whereClause }) : Promise.resolve(null);
+    public getCargo = async ({empresa, id}: {empresa: number, id: number}): Promise<ICargo | null> => {
+        const queryBuilder = this.cargoRepository.createQueryBuilder('cargo');
+
+        queryBuilder.where('cargo.empresa = :empresa', { empresa });
+        queryBuilder.where('cargo.id = :id', { id });
+        
+        return queryBuilder.getOne();
     }
 
     public createNewCargo = (cargo: ICargo) => {
-        const newCargo = cargoRepository.create(cargo as DeepPartial<Cargo>);
-        return cargoRepository.save(newCargo);
+        const newCargo = this.cargoRepository.create(cargo as DeepPartial<Cargo>);
+        return this.cargoRepository.save(newCargo);
     }
 
     public updateCargo = (cargo: ICargo) => {
-        return cargoRepository.save(cargo as DeepPartial<Cargo>);
+        return this.cargoRepository.save(cargo as DeepPartial<Cargo>);
     }
 
     public deleteCargo = (id: number) => {
-        return cargoRepository.delete(id);
+        return this.cargoRepository.delete(id);
     }
 }
 

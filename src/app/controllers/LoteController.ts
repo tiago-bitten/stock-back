@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import LoteRepository from '../repositories/LoteRepository';
 import ILote from '../interfaces/ILote';
+import moment from 'moment';
 
 class LoteController {
 
@@ -19,19 +20,35 @@ class LoteController {
         }
     }
 
-    getLotesVencimento = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+    getExpiredLotes = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
+            const empresa = Number(req.query.empresa);
 
-            const lotesVencimento = await LoteRepository.getLotesVencimento();
 
-            if (!lotesVencimento) {
+            if (!empresa) {
+                return res.status(400).json({ message: 'Company not founded' });
+            }
+
+            const queryExpiredLotes = await LoteRepository.getExpiredLotes(empresa);
+
+            if (!queryExpiredLotes) {
                 return res.status(200).json({
                     message: 'No expired batches found'
                 });
             }
+
+            const arrExpiredLotes: any = queryExpiredLotes
+                .map(m => ({
+                    id: m.id,
+                    codigoBarras: m.codigoBarras,
+                    dataFabricacao: m.dataFabricacao,
+                    dataVencimento: m.dataVencimento,
+                    produto: m.produto,
+                    status: this.getLoteExpiringStatus(m.dataVencimento)
+                }));
             
             return res.status(200).send({
-                lotesVencimento
+                arrExpiredLotes
             });
         } catch (error) {
             return res.status(500).json({ 
@@ -68,6 +85,30 @@ class LoteController {
             });
         }
     }
+
+    // #region Utils
+
+    /**
+     * VERIFICAR STATUS DE VALIDADE DO LOTE
+     * 
+     * @param dataVencimento 
+     * @return string
+     */
+    getLoteExpiringStatus = (dataVencimento: Date): string => {
+        const now = moment();
+
+        if (moment(dataVencimento).isBefore(now)) {
+            return 'expired';
+        }
+
+        if ( moment(dataVencimento).isSame(now)) {
+            return 'expiring';
+        }
+
+        return 'valid';
+    }
+
+    // #endregion
 
 }
 

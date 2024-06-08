@@ -5,8 +5,20 @@ import CargoRepository from '../repositories/CargoRepository';
 class CargoController {
     public getCargos = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const cargos = await CargoRepository.getCargos();
+            const reqEmpresa = req.query.empresa;
 
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const params = {
+                empresa: reqEmpresa,
+                skip: req.query.skip
+            }
+
+            const cargos = await CargoRepository.getCargos(params);
+
+            console.log(cargos);
             return res.status(200).send({
                 cargos
             });

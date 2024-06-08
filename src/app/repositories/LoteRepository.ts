@@ -31,14 +31,15 @@ class LoteRepository extends Lote {
 
     // #region SQL Queries
 
-    public getLotesVencimento = async () => {
+    public getExpiredLotes = async (empresa: number) => {
         const now = moment().format('YYYY-MM-DD');
 
         const lote = await loteRepository.createQueryBuilder('lote')
-            .leftJoin('lote.empresa', 'empresa')
+            .innerJoin('lote.produto', 'produto')
             .select('lote')
-            .addSelect('empresa')
-            .where('lote.dataVencimento < :dataVencimento', { dataVencimento: now })
+            .addSelect(['produto.id', 'produto.descricao'])
+            .where('lote.empresa = :empresa', { empresa: empresa })
+            .andWhere('lote.dataVencimento < :dataVencimento', { dataVencimento: now })
             .getMany();
 
         return lote;
