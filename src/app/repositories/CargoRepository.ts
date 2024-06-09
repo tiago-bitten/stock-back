@@ -2,25 +2,23 @@ import { DeepPartial } from "typeorm";
 import { AppDataSource } from "../../database/data-source";
 import ICargo from "../interfaces/ICargo";
 import Cargo from "../models/Cargo";
+import IEmpresa from "../interfaces/IEmpresa";
 class CargoRepository {
     private cargoRepository = AppDataSource.getRepository(Cargo);
 
-    public getCargos = (params?: any): Promise<ICargo[]> => {
-        const offset = params.skip ? params.skip : 0;
-        const empresa = params.empresa;
-
+    public getCargos = ({empresa, params}: {empresa: any, params?: any}) => {
         return this.cargoRepository
             .createQueryBuilder('cargo')
             .innerJoin('cargo.empresa', 'empresa')
             .select('cargo')
             .addSelect('empresa')
             .where('empresa.id = :empresa', { empresa })
-            .skip(offset)
+            .skip(params.offset)
             .take(50)
             .getMany();
     }
 
-    public getCargo = async ({empresa, id}: {empresa: number, id: number}): Promise<ICargo | null> => {
+    public getCargo = async ({empresa, id}: {empresa: number, id: number}) => {
         const queryBuilder = this.cargoRepository.createQueryBuilder('cargo');
 
         queryBuilder.where('cargo.empresa = :empresa', { empresa });
