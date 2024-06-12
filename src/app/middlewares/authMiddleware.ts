@@ -11,6 +11,7 @@ interface TokenPayload {
 export default function authMiddleware () {
     return async (req: Request, res: Response, next: NextFunction) => {
         const authHeader = req.headers.authorization;
+        const companyHeader = req.headers.empresa;
 
         if (!authHeader) {
             return res.status(401).json({ error: 'Token not provided' });
@@ -32,9 +33,9 @@ export default function authMiddleware () {
             const decoded = verify(token, 'SECRET_KEY');
             const { id } = decoded as TokenPayload;
 
-            req.userId = id;
-
-            const userRole = await UsuarioRepository.getUserRole(parseInt(req.userId));
+            req.user = id
+            
+            const userRole = await UsuarioRepository.getUserRole(parseInt(req.user));
             const url = req.originalUrl.split('/');
 
             if (url[1] === 'usuario' && userRole !== 'ADMIN') {

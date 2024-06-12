@@ -6,6 +6,7 @@ import CategoriaRouter from '../routes/CategoriaRouter';
 import LoteRouter from '../routes/LoteRouter';
 import EstoqueRouter from '../routes/EstoqueRouter';
 import EntradaRouter from '../routes/EntradaRouter';
+import CargoRouter from '../routes/CargoRouter';
 
 export const routers = [
     AuthRouter,
@@ -15,5 +16,6 @@ export const routers = [
     CategoriaRouter,
     LoteRouter,
     EstoqueRouter,
-    EntradaRouter
+    EntradaRouter,
+    CargoRouter
 ]

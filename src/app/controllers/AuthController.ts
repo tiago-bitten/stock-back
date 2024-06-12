@@ -29,7 +29,9 @@ class AuthController {
             return res.status(404).json({ message: 'User not found!' });
         }
 
-        if (!user.empresa) {
+        const empresa: any = user.empresa;
+
+        if (!empresa) {
             return res.status(401).json({ message: 'User not authorized!' });
         }
 
@@ -46,11 +48,11 @@ class AuthController {
         );
 
         delete user.senha;
-        
+
         return res.status(200).json({
             message: 'User authenticated successfully',
             token: token,
-            user: user
+            empresa: empresa.id
         });
     };
 
