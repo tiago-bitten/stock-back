@@ -19,7 +19,6 @@ class CargoController {
                 {empresa: reqEmpresa, params}
             );
 
-            console.log(cargos);
             return res.status(200).send({
                 cargos
             });

@@ -5,12 +5,53 @@ import moment from 'moment';
 
 class LoteController {
 
-    public getLotes = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+    // #region === GET Routes ===
+
+    /**
+     * LISTAR LOTES QUE VENCERÃO EM UM PERÍODO ESPECÍFICO
+     * 
+     * @route GET /lote/vencimento/:periodo
+     * @desc Lista todos os lotes que irão vencer em um período específico
+     * @access Public
+     * 
+     */
+    public getExpiringLotes = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const lotes = await LoteRepository.getLotes();
+            const empresa = Number(req.query.empresa);
+
+            if (!empresa) {
+                return res.status(400).json({ message: 'Company not founded' });
+            }
+
+            const periodo = Number(req.params.periodo);
+
+            if (
+                !periodo 
+                || periodo < 1
+            ) {
+                return res.status(400).json({ message: 'Invalid period' });
+            }
+
+            const queryExpiringLotes = await LoteRepository.getExpiringLotes(empresa, periodo);
+
+            if (!queryExpiringLotes) {
+                return res.status(200).json({
+                    message: 'No expiring batches found'
+                });
+            }
+
+            const arrExpiringLotes: any = queryExpiringLotes
+                .map(m => ({
+                    id: m.id,
+                    codigoBarras: m.codigoBarras,
+                    dataFabricacao: m.dataFabricacao,
+                    dataVencimento: m.dataVencimento,
+                    produto: m.produto,
+                    status: this.getLoteExpiringStatus(m.dataVencimento)
+                }));
 
             return res.status(200).send({
-                lotes
+                arrExpiringLotes
             });
         } catch (error) {
             return res.status(500).json({ 
@@ -20,10 +61,17 @@ class LoteController {
         }
     }
 
-    getExpiredLotes = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+    /**
+     * LISTAR LOTES VENCIDOS
+     * 
+     * @route GET /lote/vencido
+     * @desc Lista todos os lotes vencidos
+     * @access Public
+     * 
+     */
+    public getExpiredLotes = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
             const empresa = Number(req.query.empresa);
-
 
             if (!empresa) {
                 return res.status(400).json({ message: 'Company not founded' });
@@ -58,6 +106,53 @@ class LoteController {
         }
     }
 
+    /**
+     * LISTAR LOTES
+     * 
+     * @route GET /lote
+     * @desc Lista todos os lotes
+     * @access Public
+     * 
+     */
+    public getLotes = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = req.query.empresa;
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const params = {
+                skip: req.query.skip ? Number(req.query.skip) : 0
+            }
+
+            const lotes = await LoteRepository.getLotes(
+                {empresa: reqEmpresa, params}
+            );
+
+            return res.status(200).send({
+                lotes
+            });
+        } catch (error) {
+            return res.status(500).json({ 
+                message: 'Internal server error',
+                error: error
+            });
+        }
+    }
+
+    // #endregion
+
+    // #region === POST Routes === 
+
+    /**
+     * CADASTRAR NOVO LOTE
+     * 
+     * @route POST /lote
+     * @desc Cadastra um novo lote no sistema
+     * @access Public
+     * 
+     */
     public storeLote = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
             const { codigoBarras, quantidade, observacoes, dataFabricacao, dataVencimento, produto, empresa } = req.body;
@@ -86,7 +181,9 @@ class LoteController {
         }
     }
 
-    // #region Utils
+    // #endregion
+
+    // #region === Utils ===
 
     /**
      * VERIFICAR STATUS DE VALIDADE DO LOTE
@@ -94,7 +191,7 @@ class LoteController {
      * @param dataVencimento 
      * @return string
      */
-    getLoteExpiringStatus = (dataVencimento: Date): string => {
+    private getLoteExpiringStatus = (dataVencimento: Date): string => {
         const now = moment();
 
         if (moment(dataVencimento).isBefore(now)) {
