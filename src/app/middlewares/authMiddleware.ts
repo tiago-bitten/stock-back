@@ -38,7 +38,10 @@ export default function authMiddleware () {
             const userRole = await UsuarioRepository.getUserRole(parseInt(req.user));
             const url = req.originalUrl.split('/');
 
-            if (url[1] === 'usuario' && userRole !== 'ADMIN') {
+            if (
+                url[1] === ('usuario' || 'empresa') 
+                && userRole !== 'ADMIN'
+            ) {
                 return res.status(401).json({ error: 'User access unauthorized!' });
             }
 
