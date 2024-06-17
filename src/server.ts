@@ -13,6 +13,10 @@ app.use(routers);
 
 AppDataSource.initialize().then(async () => {
     app.listen(3333, () => {
-        console.log('Server is running on port 3333');
+        if (process.env.NODE_ENV === 'dev') {
+            console.log('Server running on dev env.');
+        } else {
+            console.log('Server running on prod env.');
+        }
     });
 });
