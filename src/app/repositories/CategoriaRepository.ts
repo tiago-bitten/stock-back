@@ -3,29 +3,42 @@ import { AppDataSource } from "../../database/data-source";
 import ICategoria from "../interfaces/ICategoria";
 import Categoria from "../models/Categoria";
 
-const categoryRepository = AppDataSource.getRepository(Categoria);
-
 class CategoriaRepository {
-    public getCategories = (): Promise<ICategoria[]> => {
-        return categoryRepository.find();
+    private categoryRepository = AppDataSource.getRepository(Categoria);
+
+    public getCategories = ({empresa, params}: {empresa: any, params?: any}): Promise<ICategoria[]> => {
+        return this.categoryRepository
+            .createQueryBuilder('categoria')
+            .innerJoin('categoria.empresa', 'empresa')
+            .select('categoria')
+            .addSelect('empresa')
+            .where('empresa.id = :empresa', { empresa })
+            .skip(params.offset)
+            .take(50)
+            .getMany();
     }
 
-    public getCategory = ({id, descricao}: {id?: number, descricao?: string}): Promise<ICategoria | null> => {
-        const whereClause = id ? { id } : descricao ? { descricao } : null;
-        return whereClause ? categoryRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
+    public getCategory = ({empresa, id}: {empresa: number, id: number}) => {
+        const queryBuilder = this.categoryRepository
+            .createQueryBuilder('categoria');
+
+        queryBuilder.where('categoria.empresa = :empresa', { empresa });
+        queryBuilder.where('categoria.id = :id', { id });
+        
+        return queryBuilder.getOne();
     }
 
     public createNewCategory = (category: ICategoria) => {
-        const newCategory = categoryRepository.create(category as DeepPartial<Categoria>);
-        return categoryRepository.save(newCategory);
+        const newCategory = this.categoryRepository.create(category as DeepPartial<Categoria>);
+        return this.categoryRepository.save(newCategory);
     }
 
     public updateCategory = (category: ICategoria) => {
-        return categoryRepository.save(category as DeepPartial<Categoria>);
+        return this.categoryRepository.save(category as DeepPartial<Categoria>);
     }
 
     public deleteCategory = (id: number) => {
-        return categoryRepository.delete(id);
+        return this.categoryRepository.delete(id);
     }
 }
 

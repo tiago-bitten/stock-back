@@ -13,7 +13,6 @@ interface TokenPayload {
 }
 
 class AuthController {
-
     public authenticate = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         const userRepository = UserRepository;    
 
@@ -161,7 +160,6 @@ class AuthController {
             });
         }
     };
-
 }
 
 export default new AuthController;

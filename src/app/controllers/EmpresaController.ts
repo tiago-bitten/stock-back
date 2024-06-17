@@ -5,6 +5,12 @@ import UsuarioRepository from '../repositories/UsuarioRepository';
 class EmpresaController {
     public getCompanies = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
+            const reqEmpresa = req.query.empresa;
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
             const companies = await EmpresaRepository.getCompanies();
 
             return res.status(200).send({
@@ -65,6 +71,41 @@ class EmpresaController {
             });
         }
     }
+
+    public updatedCompany = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        const reqEmpresa = req.query.empresa;
+
+        if (!reqEmpresa) {
+            return res.status(400).json({message: 'Company not found'});
+        }
+        
+        const empresaId = Number(req.params.id);
+
+        if (!empresaId) {
+            return res.status(400).json({message: 'Company not informed'});
+        }
+
+        const {
+            descricao,
+            cnpj,
+            telefone,
+            logradouro,
+            cidade,
+            ativo
+        } = req.body;
+
+        const companyToUpdate = await EmpresaRepository.getCompany({
+            id: empresaId
+        });
+
+        if (!companyToUpdate) {
+            return res.status(404).json({message: 'Company not found'});
+        }
+
+
+        
+    }
+
 }
 
 export default new EmpresaController;
