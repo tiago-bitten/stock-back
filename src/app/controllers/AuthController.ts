@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
+import { verify } from 'jsonwebtoken';
+import * as dotenv from 'dotenv';
 import UserRepository from '../repositories/UsuarioRepository';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
-import { GLOBAL_URL } from '../../env';
-import { verify } from 'jsonwebtoken';
+dotenv.config();
 
 interface TokenPayload {
     id: string;
@@ -104,12 +105,12 @@ class AuthController {
                     <div class="jumbotron text-center">
                     <h2>Reset password</h2>
                     <p>Click on the link below to reset your password:</p>
-                    <a class='btn btn-sm btn-primary' href='${GLOBAL_URL}/resetPassword?token=${token}' target='_blank'>Here</a>
+                    <a class='btn btn-sm btn-primary' href='${process.env.GLOBAL_URL}/resetPassword?token=${token}' target='_blank'>Here</a>
                     </div>
 
                     </body>
                     </html>`,
-            text: `Click on the link below to reset your password: ${GLOBAL_URL}/resetPassword?token=${token}`
+            text: `Click on the link below to reset your password: ${process.env.GLOBAL_URL}/resetPassword?token=${token}`
         });
 
         return res.status(200).json({
