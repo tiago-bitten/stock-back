@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "dev:server": "dotenv -e .env.development -- ts-node-dev --files src/server.ts",
-    "prod:server": "dotenv -e .env.production -- ts-node src/server.ts",
+    "prod:server": "dotenv -e .env.production -- ts-node --transpile-only src/server.ts",
     "typeorm": "dotenv -e .env.development -- ts-node-dev ./node_modules/typeorm/cli.js"
   },
   "repository": {
