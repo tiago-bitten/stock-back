@@ -72,38 +72,100 @@ class EmpresaController {
         }
     }
 
-    public updatedCompany = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
-        const reqEmpresa = req.query.empresa;
+    public updateCompany = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = req.query.empresa;
 
-        if (!reqEmpresa) {
-            return res.status(400).json({message: 'Company not found'});
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not informed'});
+            }
+            
+            const empresaId = Number(req.params.id);
+    
+            if (!empresaId) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+    
+            const companyToUpdate = await EmpresaRepository.getCompany({
+                id: empresaId
+            });
+    
+            if (!companyToUpdate) {
+                return res.status(404).json({message: 'Company not found'});
+            }
+    
+            const {
+                descricao,
+                cnpj,
+                telefone,
+                logradouro,
+                cidade,
+                ativo
+            } = req.body;
+    
+            (typeof descricao !== 'undefined') ? companyToUpdate.descricao = descricao : null;
+            (typeof cnpj !== 'undefined') ? companyToUpdate.cnpj = cnpj : null;
+            (typeof telefone !== 'undefined') ? companyToUpdate.telefone = telefone : null;
+            (typeof logradouro !== 'undefined') ? companyToUpdate.logradouro = logradouro : null;
+            (typeof cidade !== 'undefined') ? companyToUpdate.cidade = cidade : null;
+            (typeof ativo !== 'undefined') ? companyToUpdate.ativo = ativo : null;
+    
+            const updatedCompany = await EmpresaRepository.updateCompany(companyToUpdate);
+    
+            if (!updatedCompany) {
+                return res.status(500).json({message: 'Error while updating company'});
+            }
+    
+            return res.status(200).json({
+                message: 'Company updated successfully',
+                company: updatedCompany
+            });
+        } catch (error) {
+            return res.status(500).json({
+                message: 'Internal server error',
+                error: error
+            });
         }
-        
-        const empresaId = Number(req.params.id);
+    }
 
-        if (!empresaId) {
-            return res.status(400).json({message: 'Company not informed'});
+    public deleteCompany = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = req.query.empresa;
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not informed'});
+            }
+
+            const empresaId = Number(req.params.id);
+
+            if (!empresaId) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const companyToDelete = await EmpresaRepository.getCompany({
+                id: empresaId
+            });
+
+            if (!companyToDelete) {
+                return res.status(404).json({message: 'Company not found'});
+            }
+
+            const deletedCompany = await EmpresaRepository.deleteCompany(empresaId);
+
+            if (!deletedCompany) {
+                return res.status(500).json({message: 'Error while deleting company'});
+            }
+
+            return res.status(200).json({
+                message: 'Company deleted successfully',
+                company: deletedCompany
+            });
+        } catch (error) {
+            return res.status(500).json({
+                message: 'Internal server error',
+                error: error
+            });
         }
-
-        const {
-            descricao,
-            cnpj,
-            telefone,
-            logradouro,
-            cidade,
-            ativo
-        } = req.body;
-
-        const companyToUpdate = await EmpresaRepository.getCompany({
-            id: empresaId
-        });
-
-        if (!companyToUpdate) {
-            return res.status(404).json({message: 'Company not found'});
-        }
-
-
-        
     }
 
 }
