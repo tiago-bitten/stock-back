@@ -16,7 +16,7 @@ class CargoController {
             }
 
             const cargos = await CargoRepository.getCargos(
-                {empresa: reqEmpresa, params}
+                { empresa: reqEmpresa, params }
             );
 
             return res.status(200).send({
@@ -75,13 +75,14 @@ class CargoController {
             const cargoId = Number(req.params.id);
 
             if (!cargoId) {
-                return res.status(400).json({message: 'Cargo not found'});
+                return res.status(400).json({message: 'Cargo not informed'});
             }
 
             const { descricao, nivel } = req.body;
 
             const cargoToUpdate = await CargoRepository.getCargo({ 
-                empresa: reqEmpresa, id: cargoId 
+                empresa: reqEmpresa, 
+                id: cargoId 
             });
 
             if (!cargoToUpdate) {

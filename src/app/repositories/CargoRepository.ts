@@ -19,7 +19,8 @@ class CargoRepository {
     }
 
     public getCargo = async ({empresa, id}: {empresa: number, id: number}) => {
-        const queryBuilder = this.cargoRepository.createQueryBuilder('cargo');
+        const queryBuilder = this.cargoRepository
+            .createQueryBuilder('cargo');
 
         queryBuilder.where('cargo.empresa = :empresa', { empresa });
         queryBuilder.where('cargo.id = :id', { id });
