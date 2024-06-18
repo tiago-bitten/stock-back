@@ -18,9 +18,9 @@ const port = Number(process.env.GLOBAL_PORT) || 3000;
 AppDataSource.initialize().then(async () => {
     app.listen(port, '0.0.0.0', () => {
         if (process.env.NODE_ENV === 'dev') {
-            console.log('Server running on dev env.');
+            console.log(`Server running on port ${port}.`);
         } else {
-            console.log('Server running on prod env.');
+            console.log(`Server running on port ${port}.`);
         }
     });
 });
