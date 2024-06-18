@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use(routers);
 
-const port = Number(process.env.GLOBAL_PORT) || 3000;
+const port = Number(process.env.PORT) || 3333;
 
 AppDataSource.initialize().then(async () => {
     app.listen(port, '0.0.0.0', () => {
