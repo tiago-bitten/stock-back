@@ -49,15 +49,14 @@ class EmpresaController {
             }
 
             if (usuario) {
-                const userRepository = UsuarioRepository;
 
-                const userExists = await userRepository.getUser({id: usuario});
+                const userExists = await UsuarioRepository.getUser({id: usuario});
 
                 if (!userExists) {
                     return res.status(500).json({ message: 'Error while adding user to company' });
                 }
 
-                userRepository.updateUser({ ...userExists, empresa: newCompany.id });
+                UsuarioRepository.updateUser({ ...userExists, empresa: newCompany.id });
             }
 
             return res.status(201).json({

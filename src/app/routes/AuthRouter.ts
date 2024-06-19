@@ -5,6 +5,6 @@ const router = Router();
 
 router.post('/auth', AuthController.authenticate)
 router.post('/forgotPassword', AuthController.forgotPassword)
-router.use('/resetPassword', AuthController.resetPassword)
+router.post('/resetPassword', AuthController.resetPassword)
 
 export default router;

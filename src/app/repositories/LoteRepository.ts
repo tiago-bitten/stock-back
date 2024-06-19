@@ -19,9 +19,15 @@ class LoteRepository extends Lote {
             .getMany();
     }
 
-    public getLote = ({id, data}: {id?: number, data?: Date}) => {
-        const whereClause = id ? { id } : data ? { data } : null;
-        return whereClause ? this.loteRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
+    public getLote = ({empresa, id, data}: {empresa: number, id?: number, data?: Date}) => {        
+        const queryBuilder = this.loteRepository
+            .createQueryBuilder('lote');
+
+        queryBuilder.where('lote.empresa = :empresa', { empresa });
+        queryBuilder.andWhere('lote.id = :id', { id });
+        if (data) queryBuilder.andWhere('lote.data = :data', { data });
+        
+        return queryBuilder.getOne();
     }
 
     public createNewLote = (lote: ILote) => {

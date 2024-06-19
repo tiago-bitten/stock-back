@@ -4,6 +4,40 @@ import ICategoria from '../interfaces/ICategoria';
 import CategoriaRepository from '../repositories/CategoriaRepository';
 
 class CategoriaController {
+    public getCategory = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = Number(req.query.empresa);
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const categoryId = Number(req.params.id);
+
+            if (!categoryId) {
+                return res.status(400).json({message: 'Category not informed'});
+            }
+
+            const category = await CategoriaRepository.getCategory({
+                empresa: reqEmpresa,
+                id: categoryId
+            });
+
+            if (!category) {
+                return res.status(400).json({ message: 'Category not found' });
+            }
+
+            return res.status(200).send({
+                category
+            });
+        } catch (error) {
+            return res.status(500).json({
+                message: 'Internal server error',
+                error: error
+            });
+        }
+    }
+    
     public getCategories = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
             const reqEmpresa = req.query.empresa;

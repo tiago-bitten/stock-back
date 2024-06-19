@@ -3,6 +3,39 @@ import ICargo from '../interfaces/ICargo';
 import CargoRepository from '../repositories/CargoRepository';
 
 class CargoController {
+    public getCargo = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = Number(req.query.empresa);
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const cargoId = Number(req.params.id);
+
+            if (!cargoId) {
+                return res.status(400).json({message: 'Cargo not informed'});
+            }
+
+            const cargo = await CargoRepository.getCargo({ 
+                empresa: reqEmpresa, id: cargoId 
+            });
+
+            if (!cargo) {
+                return res.status(400).json({ message: 'Cargo not found' });
+            }
+
+            return res.status(200).send({
+                cargo
+            });
+        } catch (error) {
+            return res.status(500).json({
+                message: 'Internal server error',
+                error: error
+            });
+        }
+    }
+
     public getCargos = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
             const reqEmpresa = req.query.empresa;

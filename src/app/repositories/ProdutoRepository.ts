@@ -3,29 +3,42 @@ import { AppDataSource } from "../../database/data-source";
 import IProduto from "../interfaces/IProduto";
 import Produto from "../models/Produto";
 
-const produtoRepository = AppDataSource.getRepository(Produto);
-
 class ProdutoRepository {
-    public getProducts = (): Promise<IProduto[]> => {
-        return produtoRepository.find();
+    private produtoRepository = AppDataSource.getRepository(Produto);
+
+    public getProducts = ({empresa, params}: {empresa: any, params?: any}): Promise<IProduto[]> => {
+        return this.produtoRepository
+            .createQueryBuilder('produto')
+            .innerJoin('produto.empresa', 'empresa')
+            .select('produto')
+            .addSelect('empresa')
+            .where('empresa.id = :empresa', { empresa })
+            .skip(params.offset)
+            .take(50)
+            .getMany();
     }
 
-    public getProduct = ({id, descricao}: {id?: number, descricao?: string}): Promise<IProduto | null> => {
-        const whereClause = id ? { id } : descricao ? { descricao } : null;
-        return whereClause ? produtoRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
+    public getProduct = ({empresa, id}: {empresa: number, id: number}) => {
+        const queryBuilder = this.produtoRepository
+            .createQueryBuilder('produto');
+
+        queryBuilder.where('produto.empresa = :empresa', { empresa });
+        queryBuilder.where('produto.id = :id', { id });
+        
+        return queryBuilder.getOne();
     }
 
     public createNewProduct = (product: IProduto) => {
-        const newProduct = produtoRepository.create(product as DeepPartial<Produto>);
-        return produtoRepository.save(newProduct);
+        const newProduct = this.produtoRepository.create(product as DeepPartial<Produto>);
+        return this.produtoRepository.save(newProduct);
     }
 
     public updateProduct = (product: IProduto) => {
-        return produtoRepository.save(product as DeepPartial<Produto>);
+        return this.produtoRepository.save(product as DeepPartial<Produto>);
     }
 
     public deleteProduct = (id: number) => {
-        return produtoRepository.delete(id);
+        return this.produtoRepository.delete(id);
     }
 }
 

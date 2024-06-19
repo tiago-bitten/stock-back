@@ -3,29 +3,42 @@ import { AppDataSource } from "../../database/data-source";
 import IFornecedor from "../interfaces/IFornecedor";
 import Fornecedor from "../models/Fornecedor";
 
-const fornecedorRepository = AppDataSource.getRepository(Fornecedor);
-
 class FornecedorRepository {
-    public getFornecedores = (): Promise<IFornecedor[]> => {
-        return fornecedorRepository.find();
+    private fornecedorRepository = AppDataSource.getRepository(Fornecedor);
+
+    public getFornecedores = ({empresa, params}: {empresa: any, params?: any}): Promise<IFornecedor[]> => {
+        return this.fornecedorRepository
+            .createQueryBuilder('categoria')
+            .innerJoin('categoria.empresa', 'empresa')
+            .select('categoria')
+            .addSelect('empresa')
+            .where('empresa.id = :empresa', { empresa })
+            .skip(params.offset)
+            .take(50)
+            .getMany();
     }
 
-    public getFornecedor = ({id}: {id?: number}): Promise<IFornecedor | null> => {
-        const whereClause = id ? { id } : null;
-        return whereClause ? fornecedorRepository.findOne({ where: whereClause }) : Promise.resolve(null);
+    public getFornecedor = ({empresa, id}: {empresa: number, id: number}) => {
+        const queryBuilder = this.fornecedorRepository
+            .createQueryBuilder('fornecedor');
+
+        queryBuilder.where('fornecedor.empresa = :empresa', { empresa });
+        queryBuilder.where('fornecedor.id = :id', { id });
+        
+        return queryBuilder.getOne();
     }
 
     public createNewFornecedor = (fornecedor: IFornecedor) => {
-        const newFornecedor = fornecedorRepository.create(fornecedor as DeepPartial<Fornecedor>);
-        return fornecedorRepository.save(newFornecedor);
+        const newFornecedor = this.fornecedorRepository.create(fornecedor as DeepPartial<Fornecedor>);
+        return this.fornecedorRepository.save(newFornecedor);
     }
 
     public updateFornecedor = (fornecedor: IFornecedor) => {
-        return fornecedorRepository.save(fornecedor as DeepPartial<Fornecedor>);
+        return this.fornecedorRepository.save(fornecedor as DeepPartial<Fornecedor>);
     }
     
     public deleteFornecedor = (id: number) => {
-        return fornecedorRepository.delete(id);
+        return this.fornecedorRepository.delete(id);
     }
 }
 

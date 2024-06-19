@@ -4,20 +4,35 @@ import IUsuario from '../interfaces/IUsuario';
 import { DeepPartial } from 'typeorm';
 import ICargo from '../interfaces/ICargo';
 
-const userRepository = AppDataSource.getRepository(Usuario);
-
 class UsuarioRepository {
-    public getUsers = (): Promise<IUsuario[]> => {
-        return userRepository.find({ relations: ['empresa', 'cargo'] });
+    private userRepository = AppDataSource.getRepository(Usuario);
+
+    public getUsers = ({empresa, params}: {empresa: any, params?: any}): Promise<IUsuario[]> => {
+        return this.userRepository
+            .createQueryBuilder('usuario')
+            .innerJoin('usuario.empresa', 'empresa')
+            .leftJoin('usuario.cargo', 'cargo')
+            .select('usuario')
+            .addSelect('empresa')
+            .addSelect('cargo')
+            .where('empresa.id = :empresa', { empresa })
+            .skip(params.offset)
+            .take(50)
+            .getMany();
     };
     
-    public getUser = ({id, email}: {id?: number, email?: string}): Promise<IUsuario | null> => {
-        const whereClause = id ? { id } : email ? { email } : null;
-        return whereClause ? userRepository.findOne({ where: whereClause, relations: ['empresa', 'cargo'] }) : Promise.resolve(null);
+    public getUser = ({empresa, id}: {empresa?: number, id: number}) => {
+        const queryBuilder = this.userRepository
+            .createQueryBuilder('usuario');
+
+        queryBuilder.where('usuario.id = :id', { id });
+        (empresa) ? queryBuilder.andWhere('usuario.empresa = :empresa', { empresa }) : null;
+        
+        return queryBuilder.getOne();
     };
 
     public getUserRole = async (id: number): Promise<'ADMIN' | 'USER' | null> => {
-        const user: IUsuario | null = await userRepository.findOne({ where: { id }, relations: ['cargo'] });
+        const user: IUsuario | null = await this.userRepository.findOne({ where: { id }, relations: ['cargo'] });
     
         if (!user || !user.cargo) return null;
     
@@ -27,16 +42,16 @@ class UsuarioRepository {
     }
     
     public createNewUser = (user: IUsuario) => {
-        const newUser = userRepository.create(user as DeepPartial<Usuario>);
-        return userRepository.save(newUser);
+        const newUser = this.userRepository.create(user as DeepPartial<Usuario>);
+        return this.userRepository.save(newUser);
     };
 
     public updateUser = (user: IUsuario) => {
-        return userRepository.save(user as DeepPartial<Usuario>);
+        return this.userRepository.save(user as DeepPartial<Usuario>);
     };
 
     public deleteUser = (id: number) => {
-        return userRepository.delete(id);
+        return this.userRepository.delete(id);
     };
 }
 
