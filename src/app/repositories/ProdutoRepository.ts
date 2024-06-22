@@ -2,30 +2,64 @@ import { DeepPartial } from "typeorm";
 import { AppDataSource } from "../../database/data-source";
 import IProduto from "../interfaces/IProduto";
 import Produto from "../models/Produto";
+import moment, { Moment } from "moment";
 
 class ProdutoRepository {
     private produtoRepository = AppDataSource.getRepository(Produto);
 
-    public getProducts = ({empresa, params}: {empresa: any, params?: any}): Promise<IProduto[]> => {
+    public getProducts = ({empresa, params}: {empresa: any, params: { 
+            skip: number,
+            descricao?: string,
+            custo?: number,
+            preco?: number,
+            quantidadeMinima?: number,
+            quantidadeMaxima?: number,
+            validade?: Date | moment.Moment,
+            categoria?: number
+        }}): Promise<IProduto[]> => {
         return this.produtoRepository
             .createQueryBuilder('produto')
-            .innerJoin('produto.empresa', 'empresa')
+            .innerJoin('produto.categoria', 'categoria')
             .select('produto')
-            .addSelect('empresa')
+            .addSelect('categoria')
             .where('empresa.id = :empresa', { empresa })
-            .skip(params.offset)
+            .andWhere(w => {
+                if (params.descricao) {
+                    w.andWhere('produto.descricao LIKE :descricao', { descricao: `%${params.descricao}%` });
+                }
+                if (params.custo) {
+                    w.andWhere('produto.custo = :custo', { custo: params.custo });
+                }
+                if (params.preco) {
+                    w.andWhere('produto.preco = :preco', { preco: params.preco });
+                }
+                if (params.quantidadeMinima) {
+                    w.andWhere('produto.quantidadeMinima = :quantidadeMinima', { quantidadeMinima: params.quantidadeMinima });
+                }
+                if (params.quantidadeMaxima) {
+                    w.andWhere('produto.quantidadeMaxima = :quantidadeMaxima', { quantidadeMaxima: params.quantidadeMaxima });
+                }
+                if (params.validade) {
+                    w.andWhere('produto.validade = :validade', { validade: params.validade });
+                }
+                if (params.categoria) {
+                    w.andWhere('produto.categoria = :categoria', { categoria: params.categoria });
+                }
+            })
+            .skip(params.skip)
             .take(50)
             .getMany();
     }
 
     public getProduct = ({empresa, id}: {empresa: number, id: number}) => {
-        const queryBuilder = this.produtoRepository
-            .createQueryBuilder('produto');
+        const product = this.produtoRepository
+            .createQueryBuilder('produto')
+            .select('produto')
+            .where('empresa.id = :empresa', { empresa })
+            .andWhere('produto.id = :id', { id })
+            .getOne();
 
-        queryBuilder.where('produto.empresa = :empresa', { empresa });
-        queryBuilder.where('produto.id = :id', { id });
-        
-        return queryBuilder.getOne();
+        return product;
     }
 
     public createNewProduct = (product: IProduto) => {

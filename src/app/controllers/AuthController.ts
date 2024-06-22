@@ -47,8 +47,6 @@ class AuthController {
             {expiresIn: '1h'}
         );
 
-        delete user.senha;
-
         return res.status(200).json({
             message: 'User authenticated successfully',
             token: token,

@@ -3,6 +3,39 @@ import EstoqueRepository from '../repositories/EstoqueRepository';
 import IEstoque from '../interfaces/IEstoque';
 
 class LoteController {
+    public getEstoque = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = Number(req.query.empresa);
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const estoqueId = Number(req.params.id);
+
+            if (!estoqueId) {
+                return res.status(400).json({message: 'Estoque not informed'});
+            }
+
+            const estoque = await EstoqueRepository.getEstoque({ 
+                empresa: reqEmpresa, 
+                id: estoqueId 
+            });
+
+            if (!estoque) {
+                return res.status(404).json({message: 'Estoque not found'});
+            }
+
+            return res.status(200).send({
+                estoque
+            });
+        } catch (error) {
+            return res.status(500).json({ 
+                message: 'Internal server error',
+                error: error
+            });
+        }
+    }
 
     public getEstoques = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
@@ -13,7 +46,8 @@ class LoteController {
             }
 
             const params = {
-                skip: req.query.skip ? Number(req.query.skip) : 0
+                skip: req.query.skip ? Number(req.query.skip) : 0,
+                descricao: req.query.descricao ? String(req.query.descricao) : undefined
             }
 
             const estoques = await EstoqueRepository.getEstoques(
@@ -53,7 +87,7 @@ class LoteController {
                 throw new Error('Error while creating Estoque');
             }
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: 'Estoque created successfully',
                 Estoque: newLote
             });

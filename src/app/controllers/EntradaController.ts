@@ -3,6 +3,39 @@ import EntradaRepository from '../repositories/EntradaRepository';
 import IEntrada from '../interfaces/IEntrada';
 
 class EntradaController {
+    public getEntrada = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = Number(req.query.empresa);
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const entradaId = Number(req.params.id);
+
+            if (!entradaId) {
+                return res.status(400).json({message: 'Entrada not informed'});
+            }
+
+            const entrada = await EntradaRepository.getEntrada({ 
+                id: entradaId,
+                empresa: reqEmpresa
+            });
+
+            if (!entrada) {
+                return res.status(400).json({message: 'Entrada not found'});
+            }
+
+            return res.status(200).send({
+                entrada
+            });
+        } catch (error) {
+            return res.status(500).json({
+                message: 'Internal server error',
+                error: error
+            });
+        }
+    }
 
     public getEntradas = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
@@ -13,12 +46,16 @@ class EntradaController {
             }
 
             const params = {
-                skip: req.query.skip ? Number(req.query.skip) : 0
+                skip: req.query.skip ? Number(req.query.skip) : 0,
+                lote: req.query.lote ? Number(req.query.lote) : undefined,
+                produto: req.query.produto ? Number(req.query.produto) : undefined,
+                fornecedor: req.query.fornecedor ? Number(req.query.fornecedor) : undefined
             }
 
-            const entradas = await EntradaRepository.getEntradas(
-                { empresa: reqEmpresa, params }
-            );
+            const entradas = await EntradaRepository.getEntradas({ 
+                empresa: reqEmpresa,
+                params
+            });
 
             return res.status(200).send({
                 entradas
@@ -53,7 +90,7 @@ class EntradaController {
                 throw new Error('Error while creating Entrada');
             }
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: 'Entrada created successfully',
                 Entrada: newEntrada
             });

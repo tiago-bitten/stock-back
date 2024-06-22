@@ -6,26 +6,33 @@ import IEmpresa from "../interfaces/IEmpresa";
 class CargoRepository {
     private cargoRepository = AppDataSource.getRepository(Cargo);
 
-    public getCargos = ({empresa, params}: {empresa: any, params?: any}) => {
+    public getCargos = ({empresa, params}: {empresa: any, params: { skip: number, descricao?: string, nivel?: string }}) => {
         return this.cargoRepository
             .createQueryBuilder('cargo')
-            .innerJoin('cargo.empresa', 'empresa')
             .select('cargo')
-            .addSelect('empresa')
             .where('empresa.id = :empresa', { empresa })
-            .skip(params.offset)
+            .andWhere(w => {
+                if (params.descricao) {
+                    w.andWhere('cargo.nome LIKE :nome', { nome: `%${params.descricao}%` });
+                }
+                if (params.nivel) {
+                    w.andWhere('cargo.descricao = UPPER(:nivel)', { nivel: params.nivel });
+                }
+            })
+            .skip(params.skip)
             .take(50)
             .getMany();
     }
 
     public getCargo = async ({empresa, id}: {empresa: number, id: number}) => {
-        const queryBuilder = this.cargoRepository
-            .createQueryBuilder('cargo');
+        const cargo = this.cargoRepository
+            .createQueryBuilder('cargo')
+            .select('cargo')
+            .where('empresa.id = :empresa', { empresa })
+            .andWhere('cargo.id = :id', { id })
+            .getOne();
 
-        queryBuilder.where('cargo.empresa = :empresa', { empresa });
-        queryBuilder.where('cargo.id = :id', { id });
-        
-        return queryBuilder.getOne();
+        return cargo;
     }
 
     public createNewCargo = (cargo: ICargo) => {

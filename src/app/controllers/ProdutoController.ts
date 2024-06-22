@@ -1,9 +1,43 @@
+import moment from "moment";
 import IProduto from "../interfaces/IProduto";
 import ProdutoRepository from "../repositories/ProdutoRepository";
 import { Request, Response, NextFunction } from 'express';
 
 class ProdutoController {
-    
+    public getProduct = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = Number(req.query.empresa);
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const produtoId = Number(req.params.id);
+
+            if (!produtoId) {
+                return res.status(400).json({message: 'Produto not informed'});
+            }
+
+            const produto = await ProdutoRepository.getProduct({
+                empresa: reqEmpresa,
+                id: produtoId
+            });
+
+            if (!produto) {
+                return res.status(404).json({ message: 'Produto not found' });
+            }
+
+            return res.status(200).send({
+                produto
+            });
+        } catch (error) {
+            return res.status(500).json({ 
+                message: 'Internal server error', 
+                error: error 
+            });
+        }
+    }
+
     public getProducts = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
             const reqEmpresa = req.query.empresa;
@@ -12,8 +46,19 @@ class ProdutoController {
                 return res.status(400).json({message: 'Company not found'});
             }
 
+            if (req.query.validade && !moment(String(req.query.validade), 'YYYY-MM-DD', true).isValid()) {
+                return res.status(400).json({message: 'Invalid date'});
+            }
+
             const params = {
-                skip: req.query.skip ? Number(req.query.skip) : 0
+                skip: req.query.skip ? Number(req.query.skip) : 0,
+                descricao: req.query.descricao ? String(req.query.descricao) : undefined,
+                custo: req.query.custo ? Number(req.query.custo) : undefined,
+                preco: req.query.preco ? Number(req.query.preco) : undefined,
+                quantidadeMinima: req.query.quantidadeMinima ? Number(req.query.quantidadeMinima) : undefined,
+                quantidadeMaxima: req.query.quantidadeMaxima ? Number(req.query.quantidadeMaxima) : undefined,
+                validade: req.query.validade ? moment(String(req.query.validade)) : undefined,
+                categoria: req.query.categoria ? Number(req.query.categoria) : undefined
             }
 
             const products = await ProdutoRepository.getProducts(
@@ -47,7 +92,7 @@ class ProdutoController {
                 throw new Error('Error while creating product');
             }
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: 'Product created successfully',
                 product: newProduct
             });

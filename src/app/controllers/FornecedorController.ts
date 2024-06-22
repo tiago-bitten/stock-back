@@ -3,16 +3,55 @@ import IFornecedor from '../interfaces/IFornecedor';
 import FornecedorRepository from '../repositories/FornecedorRepository';
 
 class FornecedorController {
+    public getFornecedor = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = Number(req.query.empresa);
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const fornecedorId = Number(req.params.id);
+
+            if (!fornecedorId) {
+                return res.status(400).json({message: 'Fornecedor not informed'});
+            }
+
+            const fornecedor = await FornecedorRepository.getFornecedor({
+                empresa: reqEmpresa,
+                id: fornecedorId
+            });
+
+            if (!fornecedor) {
+                return res.status(404).json({ message: 'Fornecedor not found' });
+            }
+
+            return res.status(200).send({
+                fornecedor
+            });
+        } catch (error) {
+            return res.status(500).json({
+                message: 'Internal server error',
+                error: error
+            });
+        }
+    }
+
     public getFornecedores = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const reqEmpresa = req.query.empresa;
+            const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
                 return res.status(400).json({message: 'Company not found'});
             }
 
             const params = {
-                skip: req.query.skip ? Number(req.query.skip) : 0
+                skip: req.query.skip ? Number(req.query.skip) : 0,
+                descricao: req.query.descricao ? String(req.query.descricao) : undefined,
+                cnpj: req.query.cnpj ? String(req.query.cnpj) : undefined,
+                email: req.query.email ? String(req.query.email) : undefined,
+                telefone: req.query.telefone ? String(req.query.telefone) : undefined,
+                logradouro: req.query.logradouro ? String(req.query.logradouro) : undefined
             }
 
             const fornecedores = await FornecedorRepository.getFornecedores(
@@ -48,7 +87,7 @@ class FornecedorController {
 
             const newFornecedor = await FornecedorRepository.createNewFornecedor(fornecedorToCreate);
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: 'Fornecedor created successfully',
                 category: newFornecedor
             });

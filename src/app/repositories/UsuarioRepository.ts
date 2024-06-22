@@ -7,7 +7,7 @@ import ICargo from '../interfaces/ICargo';
 class UsuarioRepository {
     private userRepository = AppDataSource.getRepository(Usuario);
 
-    public getUsers = ({empresa, params}: {empresa: any, params?: any}): Promise<IUsuario[]> => {
+    public getUsers = ({empresa, params}: {empresa: any, params: { skip: number, nome?: string, email?: string, cpf?: string, cargo?: number}}): Promise<IUsuario[]> => {
         return this.userRepository
             .createQueryBuilder('usuario')
             .innerJoin('usuario.empresa', 'empresa')
@@ -16,19 +16,44 @@ class UsuarioRepository {
             .addSelect('empresa')
             .addSelect('cargo')
             .where('empresa.id = :empresa', { empresa })
-            .skip(params.offset)
+            .andWhere(w => {
+                if (params.nome) {
+                    w.andWhere('usuario.nome LIKE :nome', { nome: `%${params.nome}%` });
+                }
+                if (params.email) {
+                    w.andWhere('usuario.email LIKE :email', { email: `%${params.email}%` });
+                }
+                if (params.cpf) {
+                    w.andWhere('usuario.cpf LIKE :cpf', { cpf: `%${params.cpf}%` });
+                }
+                if (params.cargo) {
+                    w.andWhere('usuario.cargo = :cargo', { cargo: params.cargo });
+                }
+            
+            })
+            .skip(params.skip)
             .take(50)
             .getMany();
     };
     
-    public getUser = ({empresa, id}: {empresa?: number, id: number}) => {
-        const queryBuilder = this.userRepository
-            .createQueryBuilder('usuario');
-
-        queryBuilder.where('usuario.id = :id', { id });
-        (empresa) ? queryBuilder.andWhere('usuario.empresa = :empresa', { empresa }) : null;
+    public getUser = ({empresa, id, email}: {empresa?: number, id?: number, email?: number}) => {
+        const user = this.userRepository
+            .createQueryBuilder('usuario')
+            .select('usuario')
+            .where(w => {
+                if (id) {
+                    w.andWhere('usuario.id = :id', { id });
+                }
+                if (empresa) {
+                    w.andWhere('usuario.empresa = :empresa', { empresa });
+                }
+                if (email) {
+                    w.andWhere('usuario.email = :email', { email });
+                }
+            })
+            .getOne();
         
-        return queryBuilder.getOne();
+        return user;
     };
 
     public getUserRole = async (id: number): Promise<'ADMIN' | 'USER' | null> => {

@@ -45,12 +45,15 @@ class CargoController {
             }
 
             const params = {
-                skip: req.query.skip ? Number(req.query.skip) : 0
+                skip: req.query.skip ? Number(req.query.skip) : 0,
+                descricao: req.query.descricao ? String(req.query.descricao) : undefined,
+                nivel: (req.query.nivel && (String(req.query.nivel) === 'ADMIN' || 'USER')) ? String(req.query.nivel) : undefined
             }
 
-            const cargos = await CargoRepository.getCargos(
-                { empresa: reqEmpresa, params }
-            );
+            const cargos = await CargoRepository.getCargos({ 
+                empresa: reqEmpresa, 
+                params
+             });
 
             return res.status(200).send({
                 cargos
@@ -85,7 +88,7 @@ class CargoController {
                 return res.status(500).json({ message: 'Error while creating cargo' });
             }
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: 'Cargo created successfully',
                 category: newCargo
             });
@@ -131,7 +134,7 @@ class CargoController {
                 return res.status(500).json({ message: 'Error while updating cargo' });
             }
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: 'Cargo updated successfully',
                 category: updatedCargo
             });
@@ -171,7 +174,7 @@ class CargoController {
                 return res.status(500).json({ message: 'Error while deleting cargo' });
             }
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: 'Cargo deleted successfully',
                 category: deletedCargo
             });

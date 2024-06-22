@@ -6,26 +6,42 @@ import Fornecedor from "../models/Fornecedor";
 class FornecedorRepository {
     private fornecedorRepository = AppDataSource.getRepository(Fornecedor);
 
-    public getFornecedores = ({empresa, params}: {empresa: any, params?: any}): Promise<IFornecedor[]> => {
+    public getFornecedores = ({empresa, params}: {empresa: any, params: { skip: number, descricao?: string, cnpj?: string, email?: string, telefone?: string, logradouro?: string }}): Promise<IFornecedor[]> => {
         return this.fornecedorRepository
-            .createQueryBuilder('categoria')
-            .innerJoin('categoria.empresa', 'empresa')
-            .select('categoria')
-            .addSelect('empresa')
+            .createQueryBuilder('fornecedor')
+            .select('fornecedor')
             .where('empresa.id = :empresa', { empresa })
-            .skip(params.offset)
+            .andWhere(w => {
+                if (params.descricao) {
+                    w.andWhere('fornecedor.descricao LIKE :nome', { nome: `%${params.descricao}%` });
+                }
+                if (params.cnpj) {
+                    w.andWhere('fornecedor.cnpj LIKE :cnpj', { cnpj: `%${params.cnpj}%` });
+                }
+                if (params.email) {
+                    w.andWhere('fornecedor.email LIKE :email', { email: `%${params.email}%` });
+                }
+                if (params.telefone) {
+                    w.andWhere('fornecedor.telefone LIKE :telefone', { telefone: `%${params.telefone}%` });
+                }
+                if (params.logradouro) {
+                    w.andWhere('fornecedor.logradouro LIKE :logradouro', { logradouro: `%${params.logradouro}%` });
+                }
+            })
+            .skip(params.skip)
             .take(50)
             .getMany();
     }
 
     public getFornecedor = ({empresa, id}: {empresa: number, id: number}) => {
-        const queryBuilder = this.fornecedorRepository
-            .createQueryBuilder('fornecedor');
-
-        queryBuilder.where('fornecedor.empresa = :empresa', { empresa });
-        queryBuilder.where('fornecedor.id = :id', { id });
+        const fornecedor = this.fornecedorRepository
+            .createQueryBuilder('fornecedor')
+            .select('fornecedor')
+            .where('fornecedor.empresa = :empresa', { empresa })
+            .andWhere('fornecedor.id = :id', { id })
+            .getOne();
         
-        return queryBuilder.getOne();
+        return fornecedor;
     }
 
     public createNewFornecedor = (fornecedor: IFornecedor) => {

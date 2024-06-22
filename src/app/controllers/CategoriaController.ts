@@ -47,12 +47,14 @@ class CategoriaController {
             }
 
             const params = {
-                skip: req.query.skip ? Number(req.query.skip) : 0
+                skip: req.query.skip ? Number(req.query.skip) : 0,
+                descricao: req.query.descricao ? String(req.query.descricao) : undefined
             }
 
-            const categories = await CategoriaRepository.getCategories(
-                { empresa: reqEmpresa, params }
-            );
+            const categories = await CategoriaRepository.getCategories({ 
+                empresa: reqEmpresa,
+                params 
+            });
 
             return res.status(200).send({
                 categories
@@ -87,7 +89,7 @@ class CategoriaController {
                 return res.status(500).json({ message: 'Error while creating category' });
             }
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: 'Category created successfully',
                 category: newCategory
             });

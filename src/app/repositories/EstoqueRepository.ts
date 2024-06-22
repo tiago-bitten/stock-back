@@ -6,26 +6,30 @@ import Estoque from "../models/Estoque";
 class EstoqueRepository extends Estoque {
     private estoqueRepository = AppDataSource.getRepository(Estoque);
 
-    public getEstoques = ({empresa, params}: {empresa: any, params?: any}): Promise<IEstoque[]> => {
+    public getEstoques = ({empresa, params}: {empresa: any, params: { skip: number, descricao?: string }}): Promise<IEstoque[]> => {
         return this.estoqueRepository
-            .createQueryBuilder('categoria')
-            .innerJoin('categoria.empresa', 'empresa')
-            .select('categoria')
-            .addSelect('empresa')
+            .createQueryBuilder('estoque')
+            .select('estoque')
             .where('empresa.id = :empresa', { empresa })
-            .skip(params.offset)
+            .andWhere(w => {
+                if (params.descricao) {
+                    w.andWhere('estoque.descricao LIKE :descricao', { descricao: `%${params.descricao}%` });
+                }
+            })
+            .skip(params.skip)
             .take(50)
             .getMany();
     }
 
     public getEstoque = ({empresa, id}: {empresa: number, id: number}) => {
-        const queryBuilder = this.estoqueRepository
-            .createQueryBuilder('categoria');
-
-        queryBuilder.where('categoria.empresa = :empresa', { empresa });
-        queryBuilder.where('categoria.id = :id', { id });
+        const estoque = this.estoqueRepository
+            .createQueryBuilder('estoque')
+            .select('estoque')
+            .where('estoque.empresa = :empresa', { empresa })
+            .andWhere('estoque.id = :id', { id })
+            .getOne();
         
-        return queryBuilder.getOne();
+        return estoque;
     }
 
     public createNewEstoque = (Estoque: IEstoque) => {

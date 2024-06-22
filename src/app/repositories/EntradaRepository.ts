@@ -6,26 +6,59 @@ import Entrada from "../models/Entrada";
 class EntradaRepository extends Entrada {
     private entradaRepository = AppDataSource.getRepository(Entrada);
 
-    public getEntradas = ({empresa, params}: {empresa: any, params?: any}): Promise<IEntrada[]> => {
+    public getEntradas = ({empresa, params}: {empresa: any, params: { skip: number, lote?: number, produto?: number, fornecedor?: number }}): Promise<IEntrada[]> => {
         return this.entradaRepository
             .createQueryBuilder('entrada')
-            .innerJoin('entrada.empresa', 'empresa')
+            .innerJoin('entrada.lote', 'lote')
+            .innerJoin('entrada.produto', 'produto')
+            .innerJoin('entrada.fornecedor', 'fornecedor')
             .select('entrada')
-            .addSelect('empresa')
+            .addSelect('lote')
+            .addSelect('produto')
+            .addSelect('fornecedor')
             .where('empresa.id = :empresa', { empresa })
-            .skip(params.offset)
+            .andWhere(w => {
+                if (params.lote) {
+                    w.where('fornecedor.id = :fornecedor', { fornecedor: params.fornecedor });
+                }
+                if (params.produto) {
+                    w.andWhere('produto.id = :produto', { produto: params.produto });
+                }
+                if (params.fornecedor) {
+                    w.andWhere('fornecedor.id = :fornecedor', { fornecedor: params.fornecedor });
+                }
+            })
+            .skip(params.skip)
             .take(50)
             .getMany();
     }
 
-    public getEntrada = ({empresa, id, lote, produto, fornecedor}: {empresa:number, id?: number, lote?: number, produto?: number, fornecedor?: number}) => {
-        const queryBuilder = this.entradaRepository
-            .createQueryBuilder('entrada');
-
-        queryBuilder.where('entrada.empresa = :empresa', { empresa });
-        queryBuilder.where('entrada.id = :id', { id });
-        
-        return queryBuilder.getOne();
+    public getEntrada = ({empresa, id, lote, produto, fornecedor}: {empresa: number, id?: number, lote?: number, produto?: number, fornecedor?: number}) => {
+        return this.entradaRepository
+            .createQueryBuilder('entrada')
+            .innerJoin('entrada.lote', 'lote')
+            .innerJoin('entrada.produto', 'produto')
+            .innerJoin('entrada.fornecedor', 'fornecedor')
+            .select('entrada')
+            .addSelect('lote')
+            .addSelect('produto')
+            .addSelect('fornecedor')
+            .where('empresa.id = :empresa', { empresa })
+            .andWhere(w => {
+                if (id) {
+                    w.where('entrada.id = :id', { id });
+                }
+                if (lote) {
+                    w.where('fornecedor.id = :fornecedor', { fornecedor: fornecedor });
+                }
+                if (produto) {
+                    w.andWhere('produto.id = :produto', { produto: produto });
+                }
+                if (fornecedor) {
+                    w.andWhere('fornecedor.id = :fornecedor', { fornecedor: fornecedor });
+                }
+            })
+            .getOne();
     }
 
     public createNewEntrada = (Entrada: IEntrada) => {

@@ -9,8 +9,8 @@ router.get('/usuario', authMiddleware(), UsuarioController.getUsers);
 
 router.post('/usuario', UsuarioController.storeUser);
 
-router.put('/usuario/:id', UsuarioController.updateUser);
+router.put('/usuario/:id', authMiddleware(), UsuarioController.updateUser);
 
-router.delete('/usuario/:id', UsuarioController.deleteUser);
+router.delete('/usuario/:id', authMiddleware(), UsuarioController.deleteUser);
 
 export default router;

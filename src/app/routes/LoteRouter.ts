@@ -9,10 +9,10 @@ router.get('/lote/vencido', authMiddleware(), LoteController.getExpiredLotes);
 router.get('/lote/:id', authMiddleware(), LoteController.getLote);
 router.get('/lote', authMiddleware(), LoteController.getLotes);
 
-router.post('/lote', LoteController.storeLote);
+router.post('/lote', authMiddleware(), LoteController.storeLote);
 
-router.put('/lote/:id', LoteController.updateLote);
+router.put('/lote/:id', authMiddleware(), LoteController.updateLote);
 
-router.delete('/lote/:id', LoteController.deleteLote);
+router.delete('/lote/:id', authMiddleware(), LoteController.deleteLote);
 
 export default router;
