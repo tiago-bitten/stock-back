@@ -15,21 +15,24 @@ class UsuarioRepository {
             .select('usuario')
             .addSelect('empresa')
             .addSelect('cargo')
-            .where('empresa.id = :empresa', { empresa })
-            .andWhere(w => {
+            .where(w => {
+                w.where('usuario.empresa = :empresa', { empresa })
+
                 if (params.nome) {
                     w.andWhere('usuario.nome LIKE :nome', { nome: `%${params.nome}%` });
                 }
+
                 if (params.email) {
                     w.andWhere('usuario.email LIKE :email', { email: `%${params.email}%` });
                 }
+
                 if (params.cpf) {
                     w.andWhere('usuario.cpf LIKE :cpf', { cpf: `%${params.cpf}%` });
                 }
+
                 if (params.cargo) {
                     w.andWhere('usuario.cargo = :cargo', { cargo: params.cargo });
                 }
-            
             })
             .skip(params.skip)
             .take(50)
@@ -44,11 +47,13 @@ class UsuarioRepository {
             .addSelect('empresa')
             .where(w => {
                 if (id) {
-                    w.andWhere('usuario.id = :id', { id });
+                    w.where('usuario.id = :id', { id });
                 }
+                
                 if (empresa) {
                     w.andWhere('usuario.empresa = :empresa', { empresa });
                 }
+
                 if (email) {
                     w.andWhere('usuario.email = :email', { email });
                 }
