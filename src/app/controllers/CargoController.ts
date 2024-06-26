@@ -59,6 +59,7 @@ class CargoController {
                 cargos
             });
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 message: 'Internal server error',
                 error: error
@@ -68,19 +69,23 @@ class CargoController {
 
     public storeCargo = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const reqEmpresa = req.query.empresa;
+            const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
                 return res.status(400).json({message: 'Company not found'});
             }
             
-            const { empresa, descricao, nivel } = req.body;
+            const { descricao, nivel } = req.body;
 
-            if (!empresa || !descricao || !nivel) {
+            if (!descricao || !nivel) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            const cargoToCreate: ICargo = req.body;
+            const cargoToCreate: ICargo = {
+                empresa: reqEmpresa,
+                descricao,
+                nivel
+            };
 
             const newCargo = await CargoRepository.createNewCargo(cargoToCreate);
 

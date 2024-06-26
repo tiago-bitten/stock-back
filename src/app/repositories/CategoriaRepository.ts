@@ -10,8 +10,9 @@ class CategoriaRepository {
         return this.categoryRepository
             .createQueryBuilder('categoria')
             .select('categoria')
-            .where('empresa.id = :empresa', { empresa })
-            .andWhere(w => {
+            .where(w => {
+                w.where('categoria.empresa = :empresa', { empresa })
+
                 if (params.descricao) {
                     w.andWhere('categoria.descricao LIKE :descricao', { descricao: `%${params.descricao}%` });
                 }

@@ -40,7 +40,7 @@ class CategoriaController {
     
     public getCategories = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const reqEmpresa = req.query.empresa;
+            const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
                 return res.status(400).json({message: 'Company not found'});
@@ -69,19 +69,22 @@ class CategoriaController {
 
     public storeCategory = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const reqEmpresa = req.query.empresa;
+            const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
                 return res.status(400).json({message: 'Company not found'});
             }
 
-            const { descricao, empresa } = req.body;
+            const { descricao } = req.body;
 
-            if (!descricao || !empresa) {
+            if (!descricao) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            const categoryToCreate: ICategoria = req.body;
+            const categoryToCreate: ICategoria = {
+                empresa: reqEmpresa,
+                descricao
+            };
 
             const newCategory = await CategoriaRepository.createNewCategory(categoryToCreate);
 

@@ -23,14 +23,16 @@ class AuthController {
             return res.status(400).json({ message: 'Email and password are required!' });
         }
 
-        const user = await userRepository.getUser({email});
+        const user = await userRepository.getUser({
+            email
+        });
 
         if (!user || user.senha == null) {
             return res.status(404).json({ message: 'User not found!' });
         }
 
         const empresa: any = user.empresa;
-
+        
         if (!empresa) {
             return res.status(401).json({ message: 'User not authorized!' });
         }
@@ -44,12 +46,13 @@ class AuthController {
         const token = jwt.sign(
             { id: user.id }, 
             'SECRET_KEY', 
-            {expiresIn: '1h'}
+            { expiresIn: '1h' }
         );
 
         return res.status(200).json({
             message: 'User authenticated successfully',
             token: token,
+            usuario: user.id,
             empresa: empresa.id
         });
     };

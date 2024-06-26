@@ -36,10 +36,12 @@ class UsuarioRepository {
             .getMany();
     };
     
-    public getUser = ({empresa, id, email}: {empresa?: number, id?: number, email?: number}) => {
+    public getUser = ({empresa, id, email}: {empresa?: number, id?: number, email?: string}) => {
         const user = this.userRepository
             .createQueryBuilder('usuario')
+            .innerJoin('usuario.empresa', 'empresa')
             .select('usuario')
+            .addSelect('empresa')
             .where(w => {
                 if (id) {
                     w.andWhere('usuario.id = :id', { id });

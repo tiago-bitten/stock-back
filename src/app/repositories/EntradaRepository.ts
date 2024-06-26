@@ -16,14 +16,17 @@ class EntradaRepository extends Entrada {
             .addSelect('lote')
             .addSelect('produto')
             .addSelect('fornecedor')
-            .where('empresa.id = :empresa', { empresa })
-            .andWhere(w => {
+            .where(w => {
+                w.where('empresa.id = :empresa', { empresa })
+
                 if (params.lote) {
-                    w.where('fornecedor.id = :fornecedor', { fornecedor: params.fornecedor });
+                    w.andWhere('fornecedor.id = :fornecedor', { fornecedor: params.fornecedor });
                 }
+
                 if (params.produto) {
                     w.andWhere('produto.id = :produto', { produto: params.produto });
                 }
+
                 if (params.fornecedor) {
                     w.andWhere('fornecedor.id = :fornecedor', { fornecedor: params.fornecedor });
                 }
@@ -43,17 +46,21 @@ class EntradaRepository extends Entrada {
             .addSelect('lote')
             .addSelect('produto')
             .addSelect('fornecedor')
-            .where('empresa.id = :empresa', { empresa })
-            .andWhere(w => {
+            .where(w => {
+                w.where('entrada.empresa = :empresa', { empresa })
+
                 if (id) {
-                    w.where('entrada.id = :id', { id });
+                    w.andWhere('entrada.id = :id', { id });
                 }
+
                 if (lote) {
-                    w.where('fornecedor.id = :fornecedor', { fornecedor: fornecedor });
+                    w.andWhere('fornecedor.id = :fornecedor', { fornecedor: fornecedor });
                 }
+
                 if (produto) {
                     w.andWhere('produto.id = :produto', { produto: produto });
                 }
+
                 if (fornecedor) {
                     w.andWhere('fornecedor.id = :fornecedor', { fornecedor: fornecedor });
                 }

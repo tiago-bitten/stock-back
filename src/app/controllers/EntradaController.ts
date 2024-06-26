@@ -70,7 +70,7 @@ class EntradaController {
 
     public storeEntrada = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const reqEmpresa = req.query.empresa;
+            const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
                 return res.status(400).json({message: 'Company not found'});
@@ -82,7 +82,13 @@ class EntradaController {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            const entradaToCreate: IEntrada = req.body;
+            const entradaToCreate: IEntrada = {
+                quantidade,
+                lote,
+                fornecedor,
+                produto,
+                empresa: reqEmpresa
+            };
 
             const newEntrada = await EntradaRepository.createNewEntrada(entradaToCreate);
 
