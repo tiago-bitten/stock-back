@@ -7,21 +7,43 @@ import moment from "moment";
 class LoteRepository extends Lote {
     private loteRepository = AppDataSource.getRepository(Lote);
 
-    public getLotes = ({empresa, params}: {empresa: any, params?: any}): Promise<ILote[]> => {
+    public getLotes = ({empresa, params}: {empresa: any, params: { skip: number, produto?: number, codigoBarras?: string, dataFabricacao?: Date | moment.Moment, dataVencimento?: Date | moment.Moment, observacao?: string}}): Promise<ILote[]> => {
         return this.loteRepository
             .createQueryBuilder('lote')
-            .innerJoin('lote.empresa', 'empresa')
             .select('lote')
-            .addSelect('empresa')
+            .innerJoin('lote.produto', 'produto')
             .where('empresa.id = :empresa', { empresa })
-            .skip(params.offset)
+            .andWhere(w => {
+                if (params.produto) {
+                    w.where('produto.id = :produto', { produto: params.produto });
+                }
+                if (params.codigoBarras) {
+                    w.andWhere('lote.codigoBarras LIKE :codigoBarras', { codigoBarras: `%${params.codigoBarras}%` });
+                }
+                if (params.dataFabricacao) {
+                    w.andWhere('lote.dataFabricacao >= :dataFabricacao', { dataFabricacao: params.dataFabricacao });
+                }
+                if (params.dataVencimento) {
+                    w.andWhere('lote.dataVencimento <= :dataVencimento', { dataVencimento: params.dataVencimento });
+                }
+                if (params.observacao) {
+                    w.andWhere('lote.observacao LIKE :observacao', { observacao: `%${params.observacao}%` });
+                }
+            })
+            .skip(params.skip)
             .take(50)
             .getMany();
     }
 
-    public getLote = ({id, data}: {id?: number, data?: Date}) => {
-        const whereClause = id ? { id } : data ? { data } : null;
-        return whereClause ? this.loteRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
+    public getLote = ({empresa, id}: {empresa: number, id?: number}) => {        
+        const lote = this.loteRepository
+            .createQueryBuilder('lote')
+            .select('lote')
+            .where('lote.empresa = :empresa', { empresa })
+            .andWhere('lote.id = :id', { id })
+            .getOne();
+        
+        return lote;
     }
 
     public createNewLote = (lote: ILote) => {

@@ -4,21 +4,57 @@ import ICategoria from '../interfaces/ICategoria';
 import CategoriaRepository from '../repositories/CategoriaRepository';
 
 class CategoriaController {
+    public getCategory = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = Number(req.query.empresa);
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const categoryId = Number(req.params.id);
+
+            if (!categoryId) {
+                return res.status(400).json({message: 'Category not informed'});
+            }
+
+            const category = await CategoriaRepository.getCategory({
+                empresa: reqEmpresa,
+                id: categoryId
+            });
+
+            if (!category) {
+                return res.status(400).json({ message: 'Category not found' });
+            }
+
+            return res.status(200).send({
+                category
+            });
+        } catch (error) {
+            return res.status(500).json({
+                message: 'Internal server error',
+                error: error
+            });
+        }
+    }
+    
     public getCategories = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const reqEmpresa = req.query.empresa;
+            const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
                 return res.status(400).json({message: 'Company not found'});
             }
 
             const params = {
-                skip: req.query.skip ? Number(req.query.skip) : 0
+                skip: req.query.skip ? Number(req.query.skip) : 0,
+                descricao: req.query.descricao ? String(req.query.descricao) : undefined
             }
 
-            const categories = await CategoriaRepository.getCategories(
-                { empresa: reqEmpresa, params }
-            );
+            const categories = await CategoriaRepository.getCategories({ 
+                empresa: reqEmpresa,
+                params 
+            });
 
             return res.status(200).send({
                 categories
@@ -33,19 +69,22 @@ class CategoriaController {
 
     public storeCategory = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const reqEmpresa = req.query.empresa;
+            const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
                 return res.status(400).json({message: 'Company not found'});
             }
 
-            const { descricao, empresa } = req.body;
+            const { descricao } = req.body;
 
-            if (!descricao || !empresa) {
+            if (!descricao) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            const categoryToCreate: ICategoria = req.body;
+            const categoryToCreate: ICategoria = {
+                empresa: reqEmpresa,
+                descricao
+            };
 
             const newCategory = await CategoriaRepository.createNewCategory(categoryToCreate);
 
@@ -53,7 +92,7 @@ class CategoriaController {
                 return res.status(500).json({ message: 'Error while creating category' });
             }
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: 'Category created successfully',
                 category: newCategory
             });

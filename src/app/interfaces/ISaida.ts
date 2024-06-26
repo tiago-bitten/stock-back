@@ -5,7 +5,7 @@ import IProduto from "./IProduto";
 
 export default interface ISaida {
     id?: number,
-    empresa: number | IEmpresa,
+    empresa: number,
     quantidade: number,
     lote: number | ILote,
     produto: number | IProduto,

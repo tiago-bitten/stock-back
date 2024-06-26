@@ -3,29 +3,46 @@ import { AppDataSource } from "../../database/data-source";
 import IEstoque from "../interfaces/IEstoque";
 import Estoque from "../models/Estoque";
 
-const estoqueRepository = AppDataSource.getRepository(Estoque);
-
 class EstoqueRepository extends Estoque {
-    public getEstoques = (): Promise<IEstoque[]> => {
-        return estoqueRepository.find();
+    private estoqueRepository = AppDataSource.getRepository(Estoque);
+
+    public getEstoques = ({empresa, params}: {empresa: any, params: { skip: number, descricao?: string }}): Promise<IEstoque[]> => {
+        return this.estoqueRepository
+            .createQueryBuilder('estoque')
+            .select('estoque')
+            .where('empresa.id = :empresa', { empresa })
+            .andWhere(w => {
+                if (params.descricao) {
+                    w.andWhere('estoque.descricao LIKE :descricao', { descricao: `%${params.descricao}%` });
+                }
+            })
+            .skip(params.skip)
+            .take(50)
+            .getMany();
     }
 
-    public getEstoque = ({id, descricao}: {id?: number, descricao?: string}) => {
-        const whereClause = id ? { id } : descricao ? { descricao } : null;
-        return whereClause ? estoqueRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
+    public getEstoque = ({empresa, id}: {empresa: number, id: number}) => {
+        const estoque = this.estoqueRepository
+            .createQueryBuilder('estoque')
+            .select('estoque')
+            .where('estoque.empresa = :empresa', { empresa })
+            .andWhere('estoque.id = :id', { id })
+            .getOne();
+        
+        return estoque;
     }
 
     public createNewEstoque = (Estoque: IEstoque) => {
-        const newEstoque = estoqueRepository.create(Estoque as DeepPartial<Estoque>);
-        return estoqueRepository.save(newEstoque);
+        const newEstoque = this.estoqueRepository.create(Estoque as DeepPartial<Estoque>);
+        return this.estoqueRepository.save(newEstoque);
     }
 
     public updateEstoque = (Estoque: IEstoque) => {
-        return estoqueRepository.save(Estoque as DeepPartial<Estoque>);
+        return this.estoqueRepository.save(Estoque as DeepPartial<Estoque>);
     }
 
     public deleteEstoque = (id: number) => {
-        return estoqueRepository.delete(id);
+        return this.estoqueRepository.delete(id);
     }
 }
 

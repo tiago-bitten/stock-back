@@ -107,6 +107,48 @@ class LoteController {
     }
 
     /**
+     * BUSCAR LOTE
+     * 
+     * @route GET /lote/:id
+     * @desc buscar um lote específico
+     * @access Public
+     * 
+     */
+    public getLote = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = Number(req.query.empresa);
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const loteId = Number(req.params.id);
+
+            if (!loteId) {
+                return res.status(400).json({message: 'Lote not informed'});
+            }
+
+            const lote = await LoteRepository.getLote({
+                empresa: reqEmpresa,
+                id: loteId
+            });
+
+            if (!lote) {
+                return res.status(404).json({ message: 'Lote not found' });
+            }
+
+            return res.status(200).send({
+                lote
+            });
+        } catch (error) {
+            return res.status(500).json({ 
+                message: 'Internal server error',
+                error: error
+            });
+        }
+    }
+
+    /**
      * LISTAR LOTES
      * 
      * @route GET /lote
@@ -123,7 +165,12 @@ class LoteController {
             }
 
             const params = {
-                skip: req.query.skip ? Number(req.query.skip) : 0
+                skip: req.query.skip ? Number(req.query.skip) : 0,
+                produto: req.query.produto ? Number(req.query.produto) : undefined,
+                codigoBarras: req.query.codigoBarras ? String(req.query.codigoBarras) : undefined,
+                dataFabricacao: req.query.dataFabricacao ? moment(String(req.query.dataFabricacao)) : undefined,
+                dataVencimento: req.query.dataVencimento ? moment(String(req.query.dataVencimento)) : undefined,
+                observacao: req.query.observacao ? String(req.query.observacao) : undefined
             }
 
             const lotes = await LoteRepository.getLotes(
@@ -155,6 +202,12 @@ class LoteController {
      */
     public storeLote = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
+            const reqEmpresa = req.query.empresa;
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
             const { codigoBarras, quantidade, observacoes, dataFabricacao, dataVencimento, produto, empresa } = req.body;
 
             if (!codigoBarras || !quantidade || !dataFabricacao || !dataVencimento || !produto || !empresa) {
@@ -169,9 +222,113 @@ class LoteController {
                 throw new Error('Error while creating lote');
             }
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: 'Lote created successfully',
                 lote: newLote
+            });
+        } catch (error) {
+            return res.status(500).json({ 
+                message: 'Internal server error',
+                error: error
+            });
+        }
+    }
+
+    // #endregion
+
+    // #region === PUT Routes ===
+
+    /**
+     * ATUALIZAR LOTE
+     * 
+     * @route PUT /lote/:id
+     * @desc Atualiza um lote no sistema
+     * @access Public
+     * 
+     */
+    public updateLote = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = Number(req.query.empresa);
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+            
+            const loteId = Number(req.params.id);
+
+            if (!loteId) {
+                return res.status(400).json({message: 'Lote not informed'});
+            }
+
+            const { codigoBarras, quantidade, observacoes, dataFabricacao, dataVencimento, produto } = req.body;
+
+            const loteToUpdate = await LoteRepository.getLote({
+                empresa: reqEmpresa,
+                id: loteId
+            });
+
+            if (!loteToUpdate) {
+                return res.status(404).json({ message: 'Lote not found' });
+            }
+
+            (typeof quantidade !== 'undefined') ? loteToUpdate.quantidade = quantidade : null;
+            (typeof dataFabricacao !== 'undefined') ? loteToUpdate.dataFabricacao = dataFabricacao : null;
+            (typeof dataVencimento !== 'undefined') ? loteToUpdate.dataVencimento = dataVencimento : null;
+            (typeof produto !== 'undefined') ? loteToUpdate.produto = produto : null;
+            (typeof codigoBarras !== 'undefined') ? loteToUpdate.codigoBarras = codigoBarras : null;
+
+            const updatedLote = await LoteRepository.updateLote(loteToUpdate);
+
+            if (!updatedLote) {
+                return res.status(500).json({ message: 'Error while updating lote' });
+            }
+
+            return res.status(200).json({
+                message: 'Lote updated successfully',
+                lote: updatedLote
+            });
+        } catch (error) {
+            return res.status(500).json({ 
+                message: 'Internal server error',
+                error: error
+            });
+        }
+    }
+
+    // #endregion
+
+    // #region === DELETE Routes ===
+
+    /**
+     * DELETAR LOTE
+     * 
+     * @route DELETE /lote/:id
+     * @desc Deleta um lote do sistema
+     * @access Public
+     * 
+     */
+    public deleteLote = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = Number(req.query.empresa);
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const loteId = Number(req.params.id);
+
+            if (!loteId) {
+                return res.status(400).json({message: 'Lote not informed'});
+            }
+
+            const deletedLote = await LoteRepository.deleteLote(loteId);
+
+            if (!deletedLote) {
+                return res.status(500).json({ message: 'Error while deleting lote' });
+            }
+
+            return res.status(200).json({
+                message: 'Lote deleted successfully'
             });
         } catch (error) {
             return res.status(500).json({ 

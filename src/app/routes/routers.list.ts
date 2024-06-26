@@ -1,4 +1,3 @@
-import UsuarioRouter from '../routes/UsuarioRouter';
 import AuthRouter from '../routes/AuthRouter';
 import EmpresaRouter from '../routes/EmpresaRouter';
 import ProdutoRouter from '../routes/ProdutoRouter';
@@ -7,15 +6,24 @@ import LoteRouter from '../routes/LoteRouter';
 import EstoqueRouter from '../routes/EstoqueRouter';
 import EntradaRouter from '../routes/EntradaRouter';
 import CargoRouter from '../routes/CargoRouter';
+import FornecedorProdutoRouter from '../routes/FornecedorProdutoRouter';
+import FornecedorRouter from '../routes/FornecedorRouter';
+import SaidaRouter from '../routes/SaidaRouter';
+// import UsuarioBloqueioRouter from '../routes/UsuarioBloqueioRouter';
+import UsuarioRouter from '../routes/UsuarioRouter';
 
 export const routers = [
     AuthRouter,
-    UsuarioRouter,
-    EmpresaRouter,
-    ProdutoRouter,
+    CargoRouter,
     CategoriaRouter,
-    LoteRouter,
-    EstoqueRouter,
+    EmpresaRouter,
     EntradaRouter,
-    CargoRouter
+    EstoqueRouter,
+    FornecedorProdutoRouter,
+    FornecedorRouter,
+    LoteRouter,
+    ProdutoRouter,
+    SaidaRouter,
+    // UsuarioBloqueioRouter,
+    UsuarioRouter
 ]

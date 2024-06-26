@@ -6,26 +6,31 @@ import Categoria from "../models/Categoria";
 class CategoriaRepository {
     private categoryRepository = AppDataSource.getRepository(Categoria);
 
-    public getCategories = ({empresa, params}: {empresa: any, params?: any}): Promise<ICategoria[]> => {
+    public getCategories = ({empresa, params}: {empresa: any, params: { skip: number, descricao?: string }}): Promise<ICategoria[]> => {
         return this.categoryRepository
             .createQueryBuilder('categoria')
-            .innerJoin('categoria.empresa', 'empresa')
             .select('categoria')
-            .addSelect('empresa')
-            .where('empresa.id = :empresa', { empresa })
-            .skip(params.offset)
+            .where(w => {
+                w.where('categoria.empresa = :empresa', { empresa })
+
+                if (params.descricao) {
+                    w.andWhere('categoria.descricao LIKE :descricao', { descricao: `%${params.descricao}%` });
+                }
+            })
+            .skip(params.skip)
             .take(50)
             .getMany();
     }
 
     public getCategory = ({empresa, id}: {empresa: number, id: number}) => {
-        const queryBuilder = this.categoryRepository
-            .createQueryBuilder('categoria');
-
-        queryBuilder.where('categoria.empresa = :empresa', { empresa });
-        queryBuilder.where('categoria.id = :id', { id });
+        const categoria = this.categoryRepository
+            .createQueryBuilder('categoria')
+            .select('categoria')
+            .where('categoria.empresa = :empresa', { empresa })
+            .andWhere('categoria.id = :id', { id })
+            .getOne();
         
-        return queryBuilder.getOne();
+        return categoria;
     }
 
     public createNewCategory = (category: ICategoria) => {

@@ -3,29 +3,82 @@ import { AppDataSource } from "../../database/data-source";
 import IEntrada from "../interfaces/IEntrada";
 import Entrada from "../models/Entrada";
 
-const entradaRepository = AppDataSource.getRepository(Entrada);
-
 class EntradaRepository extends Entrada {
-    public getEntradas = (): Promise<IEntrada[]> => {
-        return entradaRepository.find();
+    private entradaRepository = AppDataSource.getRepository(Entrada);
+
+    public getEntradas = ({empresa, params}: {empresa: any, params: { skip: number, lote?: number, produto?: number, fornecedor?: number }}): Promise<IEntrada[]> => {
+        return this.entradaRepository
+            .createQueryBuilder('entrada')
+            .innerJoin('entrada.lote', 'lote')
+            .innerJoin('entrada.produto', 'produto')
+            .innerJoin('entrada.fornecedor', 'fornecedor')
+            .select('entrada')
+            .addSelect('lote')
+            .addSelect('produto')
+            .addSelect('fornecedor')
+            .where(w => {
+                w.where('empresa.id = :empresa', { empresa })
+
+                if (params.lote) {
+                    w.andWhere('fornecedor.id = :fornecedor', { fornecedor: params.fornecedor });
+                }
+
+                if (params.produto) {
+                    w.andWhere('produto.id = :produto', { produto: params.produto });
+                }
+
+                if (params.fornecedor) {
+                    w.andWhere('fornecedor.id = :fornecedor', { fornecedor: params.fornecedor });
+                }
+            })
+            .skip(params.skip)
+            .take(50)
+            .getMany();
     }
 
-    public getEntrada = ({id, lote, produto, fornecedor}: {id?: number, lote?: number, produto?: number, fornecedor?: number}) => {
-        const whereClause = id ? { id } : lote ? { lote } : produto ? { produto } : fornecedor ? { fornecedor } : null;
-        return whereClause ? entradaRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
+    public getEntrada = ({empresa, id, lote, produto, fornecedor}: {empresa: number, id?: number, lote?: number, produto?: number, fornecedor?: number}) => {
+        return this.entradaRepository
+            .createQueryBuilder('entrada')
+            .innerJoin('entrada.lote', 'lote')
+            .innerJoin('entrada.produto', 'produto')
+            .innerJoin('entrada.fornecedor', 'fornecedor')
+            .select('entrada')
+            .addSelect('lote')
+            .addSelect('produto')
+            .addSelect('fornecedor')
+            .where(w => {
+                w.where('entrada.empresa = :empresa', { empresa })
+
+                if (id) {
+                    w.andWhere('entrada.id = :id', { id });
+                }
+
+                if (lote) {
+                    w.andWhere('fornecedor.id = :fornecedor', { fornecedor: fornecedor });
+                }
+
+                if (produto) {
+                    w.andWhere('produto.id = :produto', { produto: produto });
+                }
+
+                if (fornecedor) {
+                    w.andWhere('fornecedor.id = :fornecedor', { fornecedor: fornecedor });
+                }
+            })
+            .getOne();
     }
 
     public createNewEntrada = (Entrada: IEntrada) => {
-        const newEntrada = entradaRepository.create(Entrada as DeepPartial<Entrada>);
-        return entradaRepository.save(newEntrada);
+        const newEntrada = this.entradaRepository.create(Entrada as DeepPartial<Entrada>);
+        return this.entradaRepository.save(newEntrada);
     }
 
     public updateEntrada = (Entrada: IEntrada) => {
-        return entradaRepository.save(Entrada as DeepPartial<Entrada>);
+        return this.entradaRepository.save(Entrada as DeepPartial<Entrada>);
     }
 
     public deleteEntrada = (id: number) => {
-        return entradaRepository.delete(id);
+        return this.entradaRepository.delete(id);
     }
 }
 

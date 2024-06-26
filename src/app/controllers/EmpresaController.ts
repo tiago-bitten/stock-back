@@ -3,6 +3,39 @@ import EmpresaRepository from '../repositories/EmpresaRepository';
 import UsuarioRepository from '../repositories/UsuarioRepository';
 
 class EmpresaController {
+    public getCompany = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = req.query.empresa;
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not founded'});
+            }
+
+            const empresaId = Number(req.params.id);
+
+            if (!empresaId) {
+                return res.status(400).json({message: 'Company not informed'});
+            }
+
+            const company = await EmpresaRepository.getCompany({
+                id: empresaId
+            });
+
+            if (!company) {
+                return res.status(404).json({message: 'Company does not exists, please provide another id'});
+            }
+
+            return res.status(200).send({
+                company
+            });
+        } catch (error) {
+            return res.status(500).json({
+                message: 'Internal server error',
+                error: error
+            });
+        }
+    };
+
     public getCompanies = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
             const reqEmpresa = req.query.empresa;
@@ -49,18 +82,17 @@ class EmpresaController {
             }
 
             if (usuario) {
-                const userRepository = UsuarioRepository;
 
-                const userExists = await userRepository.getUser({id: usuario});
+                const userExists = await UsuarioRepository.getUser({id: usuario});
 
                 if (!userExists) {
                     return res.status(500).json({ message: 'Error while adding user to company' });
                 }
 
-                userRepository.updateUser({ ...userExists, empresa: newCompany.id });
+                UsuarioRepository.updateUser({ ...userExists, empresa: newCompany.id });
             }
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: 'Company created successfully',
                 company: newCompany
             });

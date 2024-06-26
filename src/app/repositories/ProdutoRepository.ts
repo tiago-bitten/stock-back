@@ -2,30 +2,77 @@ import { DeepPartial } from "typeorm";
 import { AppDataSource } from "../../database/data-source";
 import IProduto from "../interfaces/IProduto";
 import Produto from "../models/Produto";
-
-const produtoRepository = AppDataSource.getRepository(Produto);
+import moment, { Moment } from "moment";
 
 class ProdutoRepository {
-    public getProducts = (): Promise<IProduto[]> => {
-        return produtoRepository.find();
+    private produtoRepository = AppDataSource.getRepository(Produto);
+
+    public getProducts = ({empresa, params}: {empresa: any, params: { 
+            skip: number,
+            descricao?: string,
+            custo?: number,
+            preco?: number,
+            quantidadeMinima?: number,
+            quantidadeMaxima?: number,
+            validade?: Date | moment.Moment,
+            categoria?: number
+        }}): Promise<IProduto[]> => {
+        return this.produtoRepository
+            .createQueryBuilder('produto')
+            .innerJoin('produto.categoria', 'categoria')
+            .select('produto')
+            .addSelect('categoria')
+            .where('empresa.id = :empresa', { empresa })
+            .andWhere(w => {
+                if (params.descricao) {
+                    w.andWhere('produto.descricao LIKE :descricao', { descricao: `%${params.descricao}%` });
+                }
+                if (params.custo) {
+                    w.andWhere('produto.custo = :custo', { custo: params.custo });
+                }
+                if (params.preco) {
+                    w.andWhere('produto.preco = :preco', { preco: params.preco });
+                }
+                if (params.quantidadeMinima) {
+                    w.andWhere('produto.quantidadeMinima = :quantidadeMinima', { quantidadeMinima: params.quantidadeMinima });
+                }
+                if (params.quantidadeMaxima) {
+                    w.andWhere('produto.quantidadeMaxima = :quantidadeMaxima', { quantidadeMaxima: params.quantidadeMaxima });
+                }
+                if (params.validade) {
+                    w.andWhere('produto.validade = :validade', { validade: params.validade });
+                }
+                if (params.categoria) {
+                    w.andWhere('produto.categoria = :categoria', { categoria: params.categoria });
+                }
+            })
+            .skip(params.skip)
+            .take(50)
+            .getMany();
     }
 
-    public getProduct = ({id, descricao}: {id?: number, descricao?: string}): Promise<IProduto | null> => {
-        const whereClause = id ? { id } : descricao ? { descricao } : null;
-        return whereClause ? produtoRepository.findOne({ where: whereClause, relations: ['empresa'] }) : Promise.resolve(null);
+    public getProduct = ({empresa, id}: {empresa: number, id: number}) => {
+        const product = this.produtoRepository
+            .createQueryBuilder('produto')
+            .select('produto')
+            .where('empresa.id = :empresa', { empresa })
+            .andWhere('produto.id = :id', { id })
+            .getOne();
+
+        return product;
     }
 
     public createNewProduct = (product: IProduto) => {
-        const newProduct = produtoRepository.create(product as DeepPartial<Produto>);
-        return produtoRepository.save(newProduct);
+        const newProduct = this.produtoRepository.create(product as DeepPartial<Produto>);
+        return this.produtoRepository.save(newProduct);
     }
 
     public updateProduct = (product: IProduto) => {
-        return produtoRepository.save(product as DeepPartial<Produto>);
+        return this.produtoRepository.save(product as DeepPartial<Produto>);
     }
 
     public deleteProduct = (id: number) => {
-        return produtoRepository.delete(id);
+        return this.produtoRepository.delete(id);
     }
 }
 
