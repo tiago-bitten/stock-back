@@ -202,19 +202,27 @@ class LoteController {
      */
     public storeLote = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const reqEmpresa = req.query.empresa;
+            const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
                 return res.status(400).json({message: 'Company not found'});
             }
 
-            const { codigoBarras, quantidade, observacoes, dataFabricacao, dataVencimento, produto, empresa } = req.body;
+            const { codigoBarras, quantidade, observacoes, dataFabricacao, dataVencimento, produto } = req.body;
 
-            if (!codigoBarras || !quantidade || !dataFabricacao || !dataVencimento || !produto || !empresa) {
+            if (!codigoBarras || !quantidade || !dataFabricacao || !dataVencimento || !produto) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            const loteToCreate: ILote = req.body;
+            const loteToCreate: ILote = {
+                codigoBarras: codigoBarras,
+                quantidade: quantidade,
+                observacoes: observacoes,
+                dataFabricacao: dataFabricacao,
+                dataVencimento: dataVencimento,
+                produto: produto,
+                empresa: reqEmpresa
+            };
 
             const newLote = await LoteRepository.createNewLote(loteToCreate);
 

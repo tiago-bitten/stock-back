@@ -22,26 +22,33 @@ class ProdutoRepository {
             .innerJoin('produto.categoria', 'categoria')
             .select('produto')
             .addSelect('categoria')
-            .where('empresa.id = :empresa', { empresa })
-            .andWhere(w => {
+            .where(w => {
+                w.where('produto.empresa = :empresa', { empresa })
+
                 if (params.descricao) {
                     w.andWhere('produto.descricao LIKE :descricao', { descricao: `%${params.descricao}%` });
                 }
+
                 if (params.custo) {
                     w.andWhere('produto.custo = :custo', { custo: params.custo });
                 }
+
                 if (params.preco) {
                     w.andWhere('produto.preco = :preco', { preco: params.preco });
                 }
+
                 if (params.quantidadeMinima) {
                     w.andWhere('produto.quantidadeMinima = :quantidadeMinima', { quantidadeMinima: params.quantidadeMinima });
                 }
+
                 if (params.quantidadeMaxima) {
                     w.andWhere('produto.quantidadeMaxima = :quantidadeMaxima', { quantidadeMaxima: params.quantidadeMaxima });
                 }
+
                 if (params.validade) {
                     w.andWhere('produto.validade = :validade', { validade: params.validade });
                 }
+
                 if (params.categoria) {
                     w.andWhere('produto.categoria = :categoria', { categoria: params.categoria });
                 }
@@ -55,7 +62,7 @@ class ProdutoRepository {
         const product = this.produtoRepository
             .createQueryBuilder('produto')
             .select('produto')
-            .where('empresa.id = :empresa', { empresa })
+            .where('produto.empresa = :empresa', { empresa })
             .andWhere('produto.id = :id', { id })
             .getOne();
 

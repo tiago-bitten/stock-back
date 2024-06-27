@@ -77,13 +77,21 @@ class FornecedorController {
                 return res.status(400).json({message: 'Company not found'});
             }
 
-            const { empresa, descricao, email, telefone, cnpj, logradouro, cidade } = req.body;
+            const { descricao, email, telefone, cnpj, logradouro, cidade } = req.body;
 
-            if (!empresa || !descricao || !email || !telefone || !cnpj || !logradouro || !cidade) {
+            if (!descricao || !email || !telefone || !cnpj || !logradouro || !cidade) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            const fornecedorToCreate: IFornecedor = req.body;
+            const fornecedorToCreate: IFornecedor = {
+                empresa: Number(reqEmpresa),
+                descricao,
+                email,
+                telefone,
+                cnpj,
+                logradouro,
+                cidade
+            };
 
             const newFornecedor = await FornecedorRepository.createNewFornecedor(fornecedorToCreate);
 

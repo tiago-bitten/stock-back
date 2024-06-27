@@ -40,7 +40,7 @@ class ProdutoController {
 
     public getProducts = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const reqEmpresa = req.query.empresa;
+            const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
                 return res.status(400).json({message: 'Company not found'});
@@ -78,13 +78,28 @@ class ProdutoController {
 
     public storeProduct = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const { descricao, custo, preco, quantidadeMinima, quantidadeMaxima, validade, categoria, empresa } = req.body;
+            const reqEmpresa = Number(req.query.empresa);
+            
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
 
-            if (!descricao || !custo || !preco || !quantidadeMinima || !quantidadeMaxima || !validade || !categoria || !empresa) {
+            const { descricao, custo, preco, quantidadeMinima, quantidadeMaxima, validade, categoria } = req.body;
+
+            if (!descricao || !custo || !preco || !quantidadeMinima || !quantidadeMaxima || !validade || !categoria) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            const productToCreate: IProduto = req.body;
+            const productToCreate: IProduto = {
+                empresa: reqEmpresa,
+                descricao,
+                custo,
+                preco,
+                quantidadeMinima,
+                quantidadeMaxima,
+                validade,
+                categoria
+            };
 
             const newProduct = await ProdutoRepository.createNewProduct(productToCreate);
 

@@ -68,19 +68,23 @@ class FornecedorProdutoController {
 
     public storeFornecedorProduto = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const reqEmpresa = req.query.empresa;
+            const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
                 return res.status(400).json({message: 'Company not found'});
             }
 
-            const { empresa, fornecedor, produto } = req.body;
+            const { fornecedor, produto } = req.body;
 
-            if (!empresa || !fornecedor || !produto) {
+            if (!fornecedor || !produto) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            const fornecedorProdutoToCreate: IFornecedorProduto = req.body;
+            const fornecedorProdutoToCreate: IFornecedorProduto = {
+                empresa: reqEmpresa,
+                fornecedor,
+                produto
+            };
 
             const newFornecedorProduto = await FornecedorProdutoRepository.createNewFornecedorProduto(fornecedorProdutoToCreate);
 

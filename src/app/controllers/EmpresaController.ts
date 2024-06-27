@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import EmpresaRepository from '../repositories/EmpresaRepository';
 import UsuarioRepository from '../repositories/UsuarioRepository';
+import CargoRepository from '../repositories/CargoRepository';
 
 class EmpresaController {
     public getCompany = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
@@ -89,7 +90,21 @@ class EmpresaController {
                     return res.status(500).json({ message: 'Error while adding user to company' });
                 }
 
-                UsuarioRepository.updateUser({ ...userExists, empresa: newCompany.id });
+                const adminCargo = await CargoRepository.createNewCargo({
+                    empresa: newCompany.id,
+                    descricao: 'Gerente',
+                    nivel: 'ADMIN'
+                });
+
+                if (!adminCargo) {
+                    return res.status(500).json({ message: 'Error while creating cargo' });
+                }
+
+                UsuarioRepository.updateUser({ 
+                    ...userExists, 
+                    empresa: newCompany.id,
+                    cargo: adminCargo.id
+                });
             }
 
             return res.status(200).json({

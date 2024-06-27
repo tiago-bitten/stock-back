@@ -39,7 +39,7 @@ class LoteController {
 
     public getEstoques = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const reqEmpresa = req.query.empresa;
+            const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
                 return res.status(400).json({message: 'Company not found'});
@@ -67,19 +67,22 @@ class LoteController {
 
     public storeEstoque = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const reqEmpresa = req.query.empresa;
+            const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
                 return res.status(400).json({message: 'Company not found'});
             }
 
-            const { descricao, empresa } = req.body;
+            const { descricao } = req.body;
 
-            if (!descricao || !empresa) {
+            if (!descricao) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            const estoqueToCreate: IEstoque = req.body;
+            const estoqueToCreate: IEstoque = {
+                empresa: reqEmpresa,
+                descricao: descricao
+            };
 
             const newLote = await EstoqueRepository.createNewEstoque(estoqueToCreate);
 

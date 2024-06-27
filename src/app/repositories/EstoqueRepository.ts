@@ -10,8 +10,9 @@ class EstoqueRepository extends Estoque {
         return this.estoqueRepository
             .createQueryBuilder('estoque')
             .select('estoque')
-            .where('empresa.id = :empresa', { empresa })
-            .andWhere(w => {
+            .where(w => {
+                w.where('estoque.empresa = :empresa', { empresa })
+
                 if (params.descricao) {
                     w.andWhere('estoque.descricao LIKE :descricao', { descricao: `%${params.descricao}%` });
                 }
