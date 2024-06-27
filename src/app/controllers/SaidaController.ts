@@ -81,13 +81,19 @@ class SaidaController {
                 return res.status(400).json({message: 'Company not found'});
             }
 
-            const { empresa, lote, quantidade, produto, fornecedor } = req.body;
+            const { lote, quantidade, produto, fornecedor } = req.body;
 
-            if (!empresa || !lote || !quantidade || !produto || !fornecedor) {
+            if (!lote || !quantidade || !produto || !fornecedor) {
                 return res.status(400).json({message: 'Missing required fields'});
             }
 
-            const saidaToCreate: ISaida = req.body;
+            const saidaToCreate: ISaida = {
+                empresa: reqEmpresa,
+                lote,
+                quantidade,
+                produto,
+                fornecedor
+            };
 
             const newSaida = await SaidaRepository.createNewSaida(saidaToCreate);
 

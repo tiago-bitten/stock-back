@@ -12,20 +12,25 @@ class LoteRepository extends Lote {
             .createQueryBuilder('lote')
             .select('lote')
             .innerJoin('lote.produto', 'produto')
-            .where('empresa.id = :empresa', { empresa })
-            .andWhere(w => {
+            .where(w => {
+                w.where('lote.empresa = :empresa', { empresa })
+
                 if (params.produto) {
                     w.where('produto.id = :produto', { produto: params.produto });
                 }
+
                 if (params.codigoBarras) {
                     w.andWhere('lote.codigoBarras LIKE :codigoBarras', { codigoBarras: `%${params.codigoBarras}%` });
                 }
+                
                 if (params.dataFabricacao) {
                     w.andWhere('lote.dataFabricacao >= :dataFabricacao', { dataFabricacao: params.dataFabricacao });
                 }
+
                 if (params.dataVencimento) {
                     w.andWhere('lote.dataVencimento <= :dataVencimento', { dataVencimento: params.dataVencimento });
                 }
+
                 if (params.observacao) {
                     w.andWhere('lote.observacao LIKE :observacao', { observacao: `%${params.observacao}%` });
                 }

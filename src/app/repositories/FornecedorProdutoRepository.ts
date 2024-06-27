@@ -14,11 +14,13 @@ class FornecedorProdutoRepository {
             .select('fornecedorProduto')
             .addSelect('fornecedor')
             .addSelect('produto')
-            .where('empresa.id = :empresa', { empresa })
-            .andWhere(w => {
+            .where(w => {
+                w.where('produto.empresa = :empresa', { empresa })
+
                 if (params.fornecedor) {
-                    w.where('fornecedor.id = :fornecedor', { fornecedor: params.fornecedor });
+                    w.andWhere('fornecedor.id = :fornecedor', { fornecedor: params.fornecedor });
                 }
+
                 if (params.produto) {
                     w.andWhere('produto.id = :produto', { produto: params.produto });
                 }
@@ -36,7 +38,7 @@ class FornecedorProdutoRepository {
             .select('fornecedorProduto')
             .addSelect('fornecedor')
             .addSelect('produto')
-            .where('empresa.id = :empresa', { empresa })
+            .where('produto.empresa = :empresa', { empresa })
             .andWhere('fornecedorProduto.id = :id', { id })
             .getOne();
         

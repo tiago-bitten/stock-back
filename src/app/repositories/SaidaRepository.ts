@@ -13,17 +13,21 @@ class SaidaRepository {
             .innerJoin('saida.produto', 'produto')
             .innerJoin('saida.fornecedor', 'fornecedor')
             .innerJoin('saida.lote', 'lote')
-            .where('empresa.id = :empresa', { empresa })
-            .andWhere(w => {
+            .where(w => {
+                w.where('saida.empresa = :empresa', { empresa })
+
                 if (params.quantidade) {
                     w.andWhere('saida.quantidade = :quantidade', { quantidade: params.quantidade });
                 }
+
                 if (params.lote) {
                     w.andWhere('saida.lote = :lote', { lote: params.lote });
                 }
+
                 if (params.produto) {
                     w.andWhere('saida.produto = :produto', { produto: params.produto });
                 }
+
                 if (params.fornecedor) {
                     w.andWhere('saida.fornecedor = :fornecedor', { fornecedor: params.fornecedor });
                 }
@@ -40,20 +44,25 @@ class SaidaRepository {
             .innerJoin('saida.produto', 'produto')
             .innerJoin('saida.fornecedor', 'fornecedor')
             .innerJoin('saida.lote', 'lote')
-            .where('saida.empresa = :empresa', { empresa })
-            .andWhere(w => {
+            .where(w => {
+                w.where('saida.empresa = :empresa', { empresa })
+
                 if (id) {
                     w.andWhere('saida.id = :id', { id });
                 }
+
                 if (quantidade) {
                     w.andWhere('saida.quantidade = :quantidade', { quantidade });
                 }
+
                 if (lote) {
                     w.andWhere('saida.lote = :lote', { lote });
                 }
+
                 if (produto) {
                     w.andWhere('saida.produto = :produto', { produto });
                 }
+                
                 if (fornecedor) {
                     w.andWhere('saida.fornecedor = :fornecedor', { fornecedor });
                 }

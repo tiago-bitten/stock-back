@@ -10,20 +10,25 @@ class FornecedorRepository {
         return this.fornecedorRepository
             .createQueryBuilder('fornecedor')
             .select('fornecedor')
-            .where('empresa.id = :empresa', { empresa })
-            .andWhere(w => {
+            .where(w => {
+                w.where('fornecedor.empresa = :empresa', { empresa })
+
                 if (params.descricao) {
                     w.andWhere('fornecedor.descricao LIKE :nome', { nome: `%${params.descricao}%` });
                 }
+
                 if (params.cnpj) {
                     w.andWhere('fornecedor.cnpj LIKE :cnpj', { cnpj: `%${params.cnpj}%` });
                 }
+
                 if (params.email) {
                     w.andWhere('fornecedor.email LIKE :email', { email: `%${params.email}%` });
                 }
+
                 if (params.telefone) {
                     w.andWhere('fornecedor.telefone LIKE :telefone', { telefone: `%${params.telefone}%` });
                 }
+
                 if (params.logradouro) {
                     w.andWhere('fornecedor.logradouro LIKE :logradouro', { logradouro: `%${params.logradouro}%` });
                 }
