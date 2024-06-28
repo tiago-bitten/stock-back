@@ -9,9 +9,9 @@ class EntradaRepository extends Entrada {
     public getEntradas = ({empresa, params}: {empresa: any, params: { skip: number, lote?: number, produto?: number, fornecedor?: number }}): Promise<IEntrada[]> => {
         return this.entradaRepository
             .createQueryBuilder('entrada')
-            .innerJoin('entrada.lote', 'lote')
-            .innerJoin('entrada.produto', 'produto')
-            .innerJoin('entrada.fornecedor', 'fornecedor')
+            .leftJoin('entrada.lote', 'lote')
+            .leftJoin('entrada.produto', 'produto')
+            .leftJoin('entrada.fornecedor', 'fornecedor')
             .select('entrada')
             .addSelect('lote')
             .addSelect('produto')
@@ -39,9 +39,9 @@ class EntradaRepository extends Entrada {
     public getEntrada = ({empresa, id, lote, produto, fornecedor}: {empresa: number, id?: number, lote?: number, produto?: number, fornecedor?: number}) => {
         return this.entradaRepository
             .createQueryBuilder('entrada')
-            .innerJoin('entrada.lote', 'lote')
-            .innerJoin('entrada.produto', 'produto')
-            .innerJoin('entrada.fornecedor', 'fornecedor')
+            .leftJoin('entrada.lote', 'lote')
+            .leftJoin('entrada.produto', 'produto')
+            .leftJoin('entrada.fornecedor', 'fornecedor')
             .select('entrada')
             .addSelect('lote')
             .addSelect('produto')

@@ -10,7 +10,7 @@ class UsuarioRepository {
     public getUsers = ({empresa, params}: {empresa: any, params: { skip: number, nome?: string, email?: string, cpf?: string, cargo?: number}}): Promise<IUsuario[]> => {
         return this.userRepository
             .createQueryBuilder('usuario')
-            .innerJoin('usuario.empresa', 'empresa')
+            .leftJoin('usuario.empresa', 'empresa')
             .leftJoin('usuario.cargo', 'cargo')
             .select('usuario')
             .addSelect('empresa')
@@ -39,10 +39,10 @@ class UsuarioRepository {
             .getMany();
     };
     
-    public getUser = ({empresa, id, email}: {empresa?: number, id?: number, email?: string}) => {
-        const user = this.userRepository
+    public getUser = async ({empresa, id, email, cpf}: {empresa?: number, id?: number, email?: string, cpf?: string}) => {
+        const user = await this.userRepository
             .createQueryBuilder('usuario')
-            .innerJoin('usuario.empresa', 'empresa')
+            .leftJoin('usuario.empresa', 'empresa')
             .select('usuario')
             .addSelect('empresa')
             .where(w => {
@@ -56,6 +56,10 @@ class UsuarioRepository {
 
                 if (email) {
                     w.andWhere('usuario.email = :email', { email });
+                }
+
+                if (cpf) {
+                    w.andWhere('usuario.cpf = :cpf', { cpf });
                 }
             })
             .getOne();

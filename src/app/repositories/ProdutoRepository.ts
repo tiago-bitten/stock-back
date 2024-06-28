@@ -19,7 +19,7 @@ class ProdutoRepository {
         }}): Promise<IProduto[]> => {
         return this.produtoRepository
             .createQueryBuilder('produto')
-            .innerJoin('produto.categoria', 'categoria')
+            .leftJoin('produto.categoria', 'categoria')
             .select('produto')
             .addSelect('categoria')
             .where(w => {

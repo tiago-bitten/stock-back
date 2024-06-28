@@ -9,6 +9,7 @@ import { CreateEstoqueTable1713571842179 } from "./migrations/1713571842179-Crea
 import { CreateCargoTable1713571910820 } from "./migrations/1713571910820-CreateCargoTable";
 import { CreateUsuarioTable1713571917627 } from "./migrations/1713571917627-CreateUsuarioTable";
 import { CreateUsuarioBloqueioTable1713571925760 } from "./migrations/1713571925760-CreateUsuarioBloqueioTable";
+import { CreateSaidaTable1719543368871 } from "./migrations/1719543368871-CreateSaidaTable";
 
 export const migrations = [
     CreateEmpresaTable1713571769283,
@@ -21,5 +22,6 @@ export const migrations = [
     CreateLoteTable1713571842180,
     CreateEntradaTable1713571864238,
     CreateEstoqueTable1713571842179,
-    CreateUsuarioBloqueioTable1713571925760
+    CreateUsuarioBloqueioTable1713571925760,
+    CreateSaidaTable1719543368871
 ]

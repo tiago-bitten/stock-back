@@ -79,7 +79,7 @@ class FornecedorController {
 
             const { descricao, email, telefone, cnpj, logradouro, cidade } = req.body;
 
-            if (!descricao || !email || !telefone || !cnpj || !logradouro || !cidade) {
+            if (!descricao || !email || !telefone || !cnpj || !logradouro || cidade == null) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
