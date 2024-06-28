@@ -58,9 +58,7 @@ class AuthController {
                 return res.status(400).json({ message: 'Email and password are required!' });
             }
     
-            const user = await userRepository.getUser({
-                email
-            });
+            const user = await userRepository.getUserToLogin(email);
     
             if (!user || user.senha == null) {
                 return res.status(404).json({ message: 'User not found!' });
@@ -185,7 +183,7 @@ class AuthController {
             const decoded = verify(resetToken, 'SECRET_KEY') as TokenPayload;
             const { id } = decoded;
 
-            const user = await userRepository.getUser({ id: parseInt(id) });
+            const user = await userRepository.getUserToLogin({ id: parseInt(id) });
 
             if (!user) {
                 return res.status(404).json({ message: 'User not found!' });

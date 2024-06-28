@@ -38,6 +38,36 @@ class UsuarioRepository {
             .take(50)
             .getMany();
     };
+
+    public getUserToLogin = async ({empresa, id, email, cpf}: {empresa?: number, id?: number, email?: string, cpf?: string}): Promise<IUsuario | null> => {
+        const user = await this.userRepository
+            .createQueryBuilder('usuario')
+            .leftJoin('usuario.empresa', 'empresa')
+            .leftJoin('usuario.cargo', 'cargo')
+            .select('usuario')
+            .addSelect('empresa')
+            .addSelect('cargo')
+            .where(w => {
+                if (id) {
+                    w.where('usuario.id = :id', { id });
+                }
+                
+                if (empresa) {
+                    w.andWhere('usuario.empresa = :empresa', { empresa });
+                }
+
+                if (email) {
+                    w.andWhere('usuario.email = :email', { email });
+                }
+
+                if (cpf) {
+                    w.andWhere('usuario.cpf = :cpf', { cpf });
+                }
+            })
+            .getOne();
+            
+        return user;
+    }
     
     public getUser = async ({empresa, id, email, cpf}: {empresa?: number, id?: number, email?: string, cpf?: string}) => {
         const user = await this.userRepository
