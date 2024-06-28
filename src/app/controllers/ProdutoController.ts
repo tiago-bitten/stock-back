@@ -2,6 +2,7 @@ import moment from "moment";
 import IProduto from "../interfaces/IProduto";
 import ProdutoRepository from "../repositories/ProdutoRepository";
 import { Request, Response, NextFunction } from 'express';
+import CategoriaRepository from "../repositories/CategoriaRepository";
 
 class ProdutoController {
     public getProduct = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
@@ -90,6 +91,15 @@ class ProdutoController {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
+            const categoriaExists = await CategoriaRepository.getCategory({
+                id: categoria,
+                empresa: reqEmpresa
+            });
+
+            if (!categoriaExists) {
+                return res.status(400).json({message: 'Categoria not found'});
+            }
+
             const productToCreate: IProduto = {
                 empresa: reqEmpresa,
                 descricao,
@@ -150,7 +160,19 @@ class ProdutoController {
             (typeof quantidadeMinima !== 'undefined') ? produtoToUpdate.quantidadeMinima = quantidadeMinima : null;
             (typeof quantidadeMaxima !== 'undefined') ? produtoToUpdate.quantidadeMaxima = quantidadeMaxima : null;
             (typeof validade !== 'undefined') ? produtoToUpdate.validade = validade : null;
-            (typeof categoria !== 'undefined') ? produtoToUpdate.categoria = categoria : null;
+
+            if (typeof categoria !== 'undefined') {
+                const categoriaExists = await CategoriaRepository.getCategory({
+                    id: categoria,
+                    empresa: reqEmpresa
+                });
+    
+                if (!categoriaExists) {
+                    return res.status(400).json({message: 'Categoria not found'});
+                }
+    
+                produtoToUpdate.categoria = categoria
+            }
 
             const updatedProduto = await ProdutoRepository.updateProduct(produtoToUpdate);
 

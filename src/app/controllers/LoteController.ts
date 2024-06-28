@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import LoteRepository from '../repositories/LoteRepository';
 import ILote from '../interfaces/ILote';
 import moment from 'moment';
+import ProdutoRepository from '../repositories/ProdutoRepository';
 
 class LoteController {
 
@@ -214,6 +215,15 @@ class LoteController {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
+            const produtoExists = await ProdutoRepository.getProduct({
+                id: produto,
+                empresa: reqEmpresa
+            });
+
+            if (!produtoExists) {
+                return res.status(400).json({message: 'Produto not found'});
+            }
+
             const loteToCreate: ILote = {
                 codigoBarras: codigoBarras,
                 quantidade: quantidade,
@@ -282,8 +292,21 @@ class LoteController {
             (typeof quantidade !== 'undefined') ? loteToUpdate.quantidade = quantidade : null;
             (typeof dataFabricacao !== 'undefined') ? loteToUpdate.dataFabricacao = dataFabricacao : null;
             (typeof dataVencimento !== 'undefined') ? loteToUpdate.dataVencimento = dataVencimento : null;
-            (typeof produto !== 'undefined') ? loteToUpdate.produto = produto : null;
             (typeof codigoBarras !== 'undefined') ? loteToUpdate.codigoBarras = codigoBarras : null;
+
+            if (typeof produto !== 'undefined') {
+
+                const produtoExists = await ProdutoRepository.getProduct({
+                    id: produto,
+                    empresa: reqEmpresa
+                });
+    
+                if (!produtoExists) {
+                    return res.status(400).json({message: 'Produto not found'});
+                }
+
+                loteToUpdate.produto = produto;
+            }
 
             const updatedLote = await LoteRepository.updateLote(loteToUpdate);
 

@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import IFornecedorProduto from '../interfaces/IFornecedorProduto';
 import FornecedorProdutoRepository from '../repositories/FornecedorProdutoRepository';
+import FornecedorRepository from '../repositories/FornecedorRepository';
+import ProdutoRepository from '../repositories/ProdutoRepository';
 
 class FornecedorProdutoController {
     public getFornecedorProduto = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
@@ -80,6 +82,24 @@ class FornecedorProdutoController {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
+            const fornecedorExists = await FornecedorRepository.getFornecedor({
+                id: fornecedor,
+                empresa: reqEmpresa
+            });
+
+            if (!fornecedorExists) {
+                return res.status(400).json({message: 'Fornecedor not found'});
+            }
+
+            const produtoExists = await ProdutoRepository.getProduct({
+                id: produto,
+                empresa: reqEmpresa
+            });
+
+            if (!produtoExists) {
+                return res.status(400).json({message: 'Produto not found'});
+            }
+
             const fornecedorProdutoToCreate: IFornecedorProduto = {
                 empresa: reqEmpresa,
                 fornecedor,
@@ -125,8 +145,33 @@ class FornecedorProdutoController {
                 return res.status(404).json({ message: 'Fornecedor produto not found' });
             }
 
-            (typeof fornecedor !== 'undefined') ? fornecedorProdutoToUpdate.fornecedor = fornecedor : null;
-            (typeof produto !== 'undefined') ? fornecedorProdutoToUpdate.produto = produto : null;;
+            if (typeof fornecedor !== 'undefined') {
+                
+                const fornecedorExists = await FornecedorRepository.getFornecedor({
+                    id: fornecedor,
+                    empresa: reqEmpresa
+                });
+    
+                if (!fornecedorExists) {
+                    return res.status(400).json({message: 'Fornecedor not found'});
+                }
+    
+                fornecedorProdutoToUpdate.fornecedor = fornecedor
+            }
+
+            if (typeof produto !== 'undefined') {
+
+                const produtoExists = await ProdutoRepository.getProduct({
+                    id: produto,
+                    empresa: reqEmpresa
+                });
+    
+                if (!produtoExists) {
+                    return res.status(400).json({message: 'Produto not found'});
+                }
+
+                fornecedorProdutoToUpdate.produto = produto
+            }
 
             const updatedFornecedorProduto = await FornecedorProdutoRepository.updateFornecedorProduto(fornecedorProdutoToUpdate);
 

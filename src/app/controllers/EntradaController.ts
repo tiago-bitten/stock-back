@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import EntradaRepository from '../repositories/EntradaRepository';
 import IEntrada from '../interfaces/IEntrada';
+import LoteRepository from '../repositories/LoteRepository';
+import FornecedorRepository from '../repositories/FornecedorRepository';
+import ProdutoRepository from '../repositories/ProdutoRepository';
 
 class EntradaController {
     public getEntrada = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
@@ -82,6 +85,33 @@ class EntradaController {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
+            const loteExists = await LoteRepository.getLote({
+                id: lote,
+                empresa: reqEmpresa
+            });
+
+            if (!loteExists) {
+                return res.status(400).json({message: 'Lote not found'});
+            }
+
+            const fornecedorExists = await FornecedorRepository.getFornecedor({
+                id: fornecedor,
+                empresa: reqEmpresa
+            });
+
+            if (!fornecedorExists) {
+                return res.status(400).json({message: 'Fornecedor not found'});
+            }
+
+            const produtoExists = await ProdutoRepository.getProduct({
+                id: produto,
+                empresa: reqEmpresa
+            });
+
+            if (!produtoExists) {
+                return res.status(400).json({message: 'Produto not found'});
+            }
+
             const entradaToCreate: IEntrada = {
                 quantidade,
                 lote,
@@ -122,8 +152,6 @@ class EntradaController {
                 return res.status(400).json({message: 'Entrada not informed'});
             }
 
-
-
             const entradaToUpdate = await EntradaRepository.getEntrada({ 
                 id: entradaId,
                 empresa: reqEmpresa
@@ -133,9 +161,50 @@ class EntradaController {
                 return res.status(400).json({message: 'Entrada not found'});
             }
             
-            const { quantidade } = req.body;
+            const { quantidade, lote, fornecedor, produto } = req.body;
 
             (typeof quantidade !== 'undefined') ? entradaToUpdate.quantidade = quantidade : null;
+
+            if (typeof lote !== 'undefined') {
+
+                const loteExists = await LoteRepository.getLote({
+                    id: lote,
+                    empresa: reqEmpresa
+                });
+    
+                if (!loteExists) {
+                    return res.status(400).json({messge: 'Lote not found'});
+                }
+    
+                entradaToUpdate.lote = lote;
+            }
+
+            if (typeof fornecedor !== 'undefined') {
+                const fornecedorExists = await FornecedorRepository.getFornecedor({
+                    id: fornecedor,
+                    empresa: reqEmpresa
+                });
+    
+                if (!fornecedorExists) {
+                    return res.status(400).json({message: 'Fornecedor not found'});
+                }
+
+                entradaToUpdate.fornecedor = fornecedor;
+            }
+
+            if (typeof produto !== 'undefined') {
+
+                const produtoExists = await ProdutoRepository.getProduct({
+                    id: produto,
+                    empresa: reqEmpresa
+                });
+    
+                if (!produtoExists) {
+                    return res.status(400).json({message: 'Produto not found'});
+                }
+
+                entradaToUpdate.produto = produto;
+            }
 
             const updatedEntrada = await EntradaRepository.updateEntrada(entradaToUpdate);
 

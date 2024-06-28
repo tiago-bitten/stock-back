@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import SaidaRepository from '../repositories/SaidaRepository';
 import ISaida from '../interfaces/ISaida';
+import LoteRepository from '../repositories/LoteRepository';
+import ProdutoRepository from '../repositories/ProdutoRepository';
+import FornecedorRepository from '../repositories/FornecedorRepository';
 
 class SaidaController {
     public getTotalSaidas = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
@@ -135,6 +138,33 @@ class SaidaController {
                 return res.status(400).json({message: 'Missing required fields'});
             }
 
+            const loteExists = await LoteRepository.getLote({
+                id: lote,
+                empresa: reqEmpresa
+            });
+
+            if (!loteExists) {
+                return res.status(400).json({message: 'Lote not found'});
+            }
+
+            const fornecedorExists = await FornecedorRepository.getFornecedor({
+                id: fornecedor,
+                empresa: reqEmpresa
+            });
+
+            if (!fornecedorExists) {
+                return res.status(400).json({message: 'Fornecedor not found'});
+            }
+
+            const produtoExists = await ProdutoRepository.getProduct({
+                id: produto,
+                empresa: reqEmpresa
+            });
+
+            if (!produtoExists) {
+                return res.status(400).json({message: 'Produto not found'});
+            }
+
             const saidaToCreate: ISaida = {
                 empresa: reqEmpresa,
                 lote,
@@ -186,10 +216,48 @@ class SaidaController {
                 return res.status(404).json({message: 'Saida not found'});
             }
 
-            (typeof lote !== 'undefined') ? saidaToUpdate.lote = lote : null;
             (typeof quantidade !== 'undefined') ? saidaToUpdate.quantidade = quantidade : null;
-            (typeof produto !== 'undefined') ? saidaToUpdate.produto = produto : null;
-            (typeof fornecedor !== 'undefined') ? saidaToUpdate.fornecedor = fornecedor : null;
+
+            if (typeof lote !== 'undefined') {
+
+                const loteExists = await LoteRepository.getLote({
+                    id: lote,
+                    empresa: reqEmpresa
+                });
+    
+                if (!loteExists) {
+                    return res.status(400).json({message: 'Lote not found'});
+                }
+    
+                saidaToUpdate.lote = lote;
+            }
+
+            if (typeof fornecedor !== 'undefined') {
+                const fornecedorExists = await FornecedorRepository.getFornecedor({
+                    id: fornecedor,
+                    empresa: reqEmpresa
+                });
+    
+                if (!fornecedorExists) {
+                    return res.status(400).json({message: 'Fornecedor not found'});
+                }
+
+                saidaToUpdate.fornecedor = fornecedor;
+            }
+
+            if (typeof produto !== 'undefined') {
+
+                const produtoExists = await ProdutoRepository.getProduct({
+                    id: produto,
+                    empresa: reqEmpresa
+                });
+    
+                if (!produtoExists) {
+                    return res.status(400).json({message: 'Produto not found'});
+                }
+
+                saidaToUpdate.produto = produto;
+            }
 
             const updatedSaida = await SaidaRepository.updateSaida(saidaToUpdate);
 

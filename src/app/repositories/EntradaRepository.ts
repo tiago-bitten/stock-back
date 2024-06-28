@@ -17,7 +17,7 @@ class EntradaRepository extends Entrada {
             .addSelect('produto')
             .addSelect('fornecedor')
             .where(w => {
-                w.where('empresa.id = :empresa', { empresa })
+                w.where('entrada.empresa = :empresa', { empresa })
 
                 if (params.lote) {
                     w.andWhere('fornecedor.id = :fornecedor', { fornecedor: params.fornecedor });
