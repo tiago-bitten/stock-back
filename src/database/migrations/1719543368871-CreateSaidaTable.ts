@@ -58,7 +58,7 @@ export class CreateSaidaTable1719543368871 implements MigrationInterface {
                     },
                     {
                         name: 'FKSaidaLote',
-                        columnNames: ['lote'],
+                        columnNames: ['loteId'],
                         referencedColumnNames: ['id'],
                         referencedTableName: 'lote',
                         onDelete: 'CASCADE',
