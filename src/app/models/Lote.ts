@@ -41,7 +41,7 @@ class Lote {
     @OneToMany(() => Entrada, (entrada) => entrada.lote)
     entrada: Entrada[];
 
-    @OneToMany(() => Saida, (saida) => saida.fornecedor)
+    @OneToMany(() => Saida, (saida) => saida.lote)
     saida: Saida[];
 }
 
