@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 import UsuarioRepository from '../repositories/UsuarioRepository';
+import AuthRepository from '../repositories/AuthRepository';
 
 interface TokenPayload {
     id: string;
@@ -11,7 +12,6 @@ interface TokenPayload {
 export default function authMiddleware () {
     return async (req: Request, res: Response, next: NextFunction) => {
         const authHeader = req.headers.authorization;
-        const companyHeader = req.headers.empresa;
 
         if (!authHeader) {
             return res.status(401).json({ error: 'Token not provided' });
@@ -27,6 +27,10 @@ export default function authMiddleware () {
 
         if (!/^Bearer$/i.test(scheme)) {
             return res.status(401).json({ error: 'Token malformed' });
+        }
+
+        if (AuthRepository.isTokenInvalid(token)) {
+            return res.status(401).json({ error: 'Token invalid' });
         }
 
         try {
