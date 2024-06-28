@@ -12,7 +12,7 @@ class UsuarioRepository {
             .createQueryBuilder('usuario')
             .leftJoin('usuario.empresa', 'empresa')
             .leftJoin('usuario.cargo', 'cargo')
-            .select('usuario')
+            .select(['usuario.createdAt', 'usuario.updatedAt', 'usuario.id', 'usuario.nome', 'usuario.email', 'usuario.cpf', 'usuario.cargo', 'usuario.empresa'])
             .addSelect('empresa')
             .addSelect('cargo')
             .where(w => {
@@ -43,8 +43,10 @@ class UsuarioRepository {
         const user = await this.userRepository
             .createQueryBuilder('usuario')
             .leftJoin('usuario.empresa', 'empresa')
-            .select('usuario')
+            .leftJoin('usuario.cargo', 'cargo')
+            .select(['usuario.createdAt', 'usuario.updatedAt', 'usuario.id', 'usuario.nome', 'usuario.email', 'usuario.cpf', 'usuario.cargo', 'usuario.empresa'])
             .addSelect('empresa')
+            .addSelect('cargo')
             .where(w => {
                 if (id) {
                     w.where('usuario.id = :id', { id });
