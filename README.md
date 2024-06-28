@@ -12,7 +12,7 @@
 ## To run a migration:
 <pre>npm run typeorm -- -d ./src/database/data-source.ts migration:run</pre>
 
-## Documentation and routes
+## To use the api:
 To see the project docs click [here](https://www.postman.com/cloudy-meadow-118088/workspace/stocksense/collection/24113981-e0c4ee38-c4a0-42f5-971e-412259549c5f).
 
 # Convention
