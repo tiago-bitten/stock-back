@@ -40,7 +40,9 @@ class Usuario {
     @BeforeInsert()
     @BeforeUpdate()
     hashPassword () {
-        return (this.senha = hashSync(this.senha, 8));
+        if (this.senha) {
+            return (this.senha = hashSync(this.senha, 8));
+        }
     };
 }
 
