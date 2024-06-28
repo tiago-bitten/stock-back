@@ -11,7 +11,7 @@ class LoteRepository extends Lote {
         return this.loteRepository
             .createQueryBuilder('lote')
             .select('lote')
-            .innerJoin('lote.produto', 'produto')
+            .leftJoin('lote.produto', 'produto')
             .where(w => {
                 w.where('lote.empresa = :empresa', { empresa })
 
@@ -71,7 +71,7 @@ class LoteRepository extends Lote {
         const expiringDate = moment().add(periodo, 'days').format('YYYY-MM-DD');
 
         const lote = await this.loteRepository.createQueryBuilder('lote')
-            .innerJoin('lote.produto', 'produto')
+            .leftJoin('lote.produto', 'produto')
             .select('lote')
             .addSelect(['produto.id', 'produto.descricao'])
             .where('lote.empresa = :empresa', { empresa: empresa })
@@ -85,7 +85,7 @@ class LoteRepository extends Lote {
         const now = moment().format('YYYY-MM-DD');
 
         const lote = await this.loteRepository.createQueryBuilder('lote')
-            .innerJoin('lote.produto', 'produto')
+            .leftJoin('lote.produto', 'produto')
             .select('lote')
             .addSelect(['produto.id', 'produto.descricao'])
             .where('lote.empresa = :empresa', { empresa: empresa })

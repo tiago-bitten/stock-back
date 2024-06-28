@@ -6,13 +6,33 @@ import Saida from "../models/Saida";
 class SaidaRepository {
     private saidaRepository = AppDataSource.getRepository(Saida);
 
+    getTotalSaidas = async ({empresa, params}: {empresa: number, params: { limit: number, dataInicial: Date | moment.Moment, dataFinal: Date | moment.Moment }}) => {
+        const saidas = await this.saidaRepository
+            .createQueryBuilder('saida')
+            .select('produto.id AS produtoId')
+            .addSelect('produto.descricao AS produto')
+            .addSelect('SUM(saida.quantidade) AS quantidade')
+            .leftJoin('saida.produto', 'produto')
+            .where(w => {
+                w.where('saida.empresa = :empresa', { empresa })
+                w.andWhere('saida.created_at >= :dataInicial', { dataInicial: params.dataInicial });
+                w.andWhere('saida.created_at <= :dataFinal', { dataFinal: params.dataFinal });
+            })
+            .groupBy('produto.id, produto.descricao')
+            .orderBy('quantidade', 'DESC')
+            .limit(params.limit)
+            .getRawMany();
+
+        return saidas;
+    }
+
     public getSaidas = ({empresa, params}: {empresa: any, params: { skip: number, quantidade?: number, lote?: number, produto?: number, fornecedor?: number }}): Promise<Saida[]> => {
         return this.saidaRepository
             .createQueryBuilder('saida')
             .select('saida')
-            .innerJoin('saida.produto', 'produto')
-            .innerJoin('saida.fornecedor', 'fornecedor')
-            .innerJoin('saida.lote', 'lote')
+            .leftJoin('saida.produto', 'produto')
+            .leftJoin('saida.fornecedor', 'fornecedor')
+            .leftJoin('saida.lote', 'lote')
             .where(w => {
                 w.where('saida.empresa = :empresa', { empresa })
 
@@ -41,9 +61,9 @@ class SaidaRepository {
         const saida = this.saidaRepository
             .createQueryBuilder('saida')
             .select('saida')
-            .innerJoin('saida.produto', 'produto')
-            .innerJoin('saida.fornecedor', 'fornecedor')
-            .innerJoin('saida.lote', 'lote')
+            .leftJoin('saida.produto', 'produto')
+            .leftJoin('saida.fornecedor', 'fornecedor')
+            .leftJoin('saida.lote', 'lote')
             .where(w => {
                 w.where('saida.empresa = :empresa', { empresa })
 

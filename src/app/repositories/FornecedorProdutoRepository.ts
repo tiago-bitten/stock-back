@@ -9,8 +9,8 @@ class FornecedorProdutoRepository {
     public getFornecedorProdutos = ({empresa, params}: {empresa: any, params: { skip: number, fornecedor?: number, produto?: number }}): Promise<IFornecedorProduto[]> => {
         return this.fornecedorProdutoRepository
             .createQueryBuilder('fornecedorProduto')
-            .innerJoin('fornecedorProduto.fornecedor', 'fornecedor')
-            .innerJoin('fornecedorProduto.produto', 'produto')
+            .leftJoin('fornecedorProduto.fornecedor', 'fornecedor')
+            .leftJoin('fornecedorProduto.produto', 'produto')
             .select('fornecedorProduto')
             .addSelect('fornecedor')
             .addSelect('produto')
@@ -33,8 +33,8 @@ class FornecedorProdutoRepository {
     public getFornecedorProduto = ({empresa, id}: {empresa: number, id: number}) => {
         const queryBuilder = this.fornecedorProdutoRepository
             .createQueryBuilder('fornecedorProduto')
-            .innerJoin('fornecedorProduto.fornecedor', 'fornecedor')
-            .innerJoin('fornecedorProduto.produto', 'produto')
+            .leftJoin('fornecedorProduto.fornecedor', 'fornecedor')
+            .leftJoin('fornecedorProduto.produto', 'produto')
             .select('fornecedorProduto')
             .addSelect('fornecedor')
             .addSelect('produto')

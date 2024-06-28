@@ -3,6 +3,54 @@ import SaidaRepository from '../repositories/SaidaRepository';
 import ISaida from '../interfaces/ISaida';
 
 class SaidaController {
+    public getTotalSaidas = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+        try {
+            const reqEmpresa = Number(req.query.empresa);
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
+            }
+
+            const dataInicial = new Date(String(req.query.dataInicial));
+            const dataFinal = new Date(String(req.query.dataFinal));
+            const limit = Number(req.query.limit);
+
+            if (!dataInicial || !dataFinal || !limit) {
+                return res.status(400).json({message: 'Missing required fields'});
+            }
+
+            if (dataInicial > dataFinal) {
+                return res.status(400).json({message: 'Data Inicial must be less than Data Final'});
+            }
+
+            if (limit < 1) {
+                return res.status(400).json({message: 'Limit must be greater than 0'});
+            }
+
+            const totalSaidas = await SaidaRepository.getTotalSaidas({
+                empresa: reqEmpresa,
+                params: {
+                    dataInicial,
+                    dataFinal,
+                    limit
+                }
+            });
+
+            if (!totalSaidas) {
+                return res.status(404).json({ message: 'Total Saidas not found' });
+            }
+
+            return res.status(200).send({
+                totalSaidas
+            });
+        } catch (error) {
+            return res.status(500).json({
+                message: 'Internal server error',
+                error: error
+            });
+        }
+    };
+
     public getSaida = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
             const reqEmpresa = Number(req.query.empresa);
