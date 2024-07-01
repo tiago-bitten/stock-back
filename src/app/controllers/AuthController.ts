@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import AuthRepository from '../repositories/AuthRepository';
+import utils from '../lib/utils';
 dotenv.config();
 
 interface TokenPayload {
@@ -79,7 +80,7 @@ class AuthController {
             const token = jwt.sign(
                 { id: user.id }, 
                 'SECRET_KEY', 
-                { expiresIn: '1h' }
+                { expiresIn: '3h' }
             );
     
             return res.status(200).json({
@@ -106,29 +107,33 @@ class AuthController {
                 return res.status(400).json({ message: 'Please, provide an email!' });
             }
     
-            const user = await userRepository.getUser({email});
+            const user = await userRepository.getUserToLogin({email});
     
             if (!user) {
                 return res.status(404).json({ message: 'User not found!' });
             }
-    
-            const token = jwt.sign(
-                { id: user.id }, 
-                'SECRET_KEY', 
-                {expiresIn: '1h'}
-            );
-    
+
+            const newPassword = utils.randomPassword();
+
+            user.senha = newPassword;
+
+            const updatedPassword = await userRepository.updateUser(user);
+
+            if (!updatedPassword) {
+                return res.status(500).json({ message: 'Error updating user password!' });
+            }
+
             const transport = nodemailer.createTransport({
-                host: "sandbox.smtp.mailtrap.io",
-                port: 2525,
+                host: process.env.MAILTRAP_HOST,
+                port: Number(process.env.MAILTRAP_PORT),
                 auth: {
-                    user: "bb13ec937a450a",
-                    pass: "e0dc432b0a683f"
+                    user: process.env.MAILTRAP_USER,
+                    pass: process.env.MAILTRAP_PASS
                 }
             });
     
             transport.sendMail({
-                from: 'Stock Sense <contato.gustavoneskovek@gmail.com>',
+                from: 'Stock Sense <suporte@stocksense.com>',
                 to: user.email,
                 subject: 'Password recovery',
                 html: `<!DOCTYPE html>
@@ -144,14 +149,14 @@ class AuthController {
                         <body>
     
                         <div class="jumbotron text-center">
-                        <h2>Reset password</h2>
-                        <p>Click on the link below to reset your password:</p>
-                        <a class='btn btn-sm btn-primary' href='${process.env.GLOBAL_URL}/resetPassword?token=${token}' target='_blank'>Here</a>
+                        <h2>STOCKSENSE - Reset password</h2>
+                        <p>Your new password is available here:</p>
+                        <p><strong class="label label-success">${newPassword}</strong></p>
                         </div>
     
                         </body>
                         </html>`,
-                text: `Click on the link below to reset your password: ${process.env.GLOBAL_URL}/resetPassword?token=${token}`
+                text: `Your new password: ${newPassword}`
             });
     
             return res.status(200).json({
