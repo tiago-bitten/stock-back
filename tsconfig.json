@@ -1,22 +1,21 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "lib": [
-      "es6"
-    ], 
-    "allowJs": true,
-    "outDir": "build",
-    "rootDir": "src",
-    "strict": true,
-    "noImplicitAny": true,
-    "strictPropertyInitialization": false,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "experimentalDecorators": true, /* Enables experimental support for ES7 decorators. */
-    "emitDecoratorMetadata": true, /* Enables experimental support for emitting type metadata for decorators. */
-    /* Advanced Options */
-    "skipLibCheck": true, /* Skip type checking of declaration files. */
-    "forceConsistentCasingInFileNames": true
-  }
+    "target": "es2020", /* Compatível com versões modernas do Node.js */
+    "module": "commonjs", /* Padrão do Node.js */
+    "lib": ["es2020"], /* Inclui as funcionalidades mais recentes */
+    "allowJs": true, /* Permite importar arquivos .js */
+    "outDir": "dist", /* Saída da compilação, mais comum usar "dist" */
+    "rootDir": "src", /* Raiz do código-fonte */
+    "strict": true, /* Ativa verificações estritas */
+    "noImplicitAny": true, /* Não permite tipos implícitos como 'any' */
+    "strictPropertyInitialization": false, /* Desativa inicialização estrita de propriedades */
+    "esModuleInterop": true, /* Suporte para `import` e `require` */
+    "resolveJsonModule": true, /* Permite importar arquivos JSON */
+    "experimentalDecorators": true, /* Habilita suporte a decorators */
+    "emitDecoratorMetadata": true, /* Emite metadados para decorators */
+    "skipLibCheck": true, /* Ignora verificação de tipos de bibliotecas */
+    "forceConsistentCasingInFileNames": true /* Exige consistência em nomes de arquivos */
+  },
+  "include": ["src"], /* Inclui somente arquivos na pasta src */
+  "exclude": ["node_modules", "dist", "build"] /* Exclui pastas desnecessárias */
 }
