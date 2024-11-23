@@ -2,12 +2,13 @@
   "name": "stock-back",
   "version": "1.0.0",
   "description": "Back end do aplicativo de estoque da Labian Software LTDA.",
-  "scripts": {
+"scripts": {
     "build": "tsc",
     "dev:server": "dotenv -e .env.development -- ts-node-dev --files src/server.ts",
     "prod:server": "dotenv -e .env.production -- ts-node --transpile-only src/server.ts",
-    "typeorm": "dotenv -e .env.development -- ts-node-dev ./node_modules/typeorm/cli.js"
-  },
+    "typeorm": "dotenv -e .env.development -- ts-node-dev ./node_modules/typeorm/cli.js",
+    "start": "node dist/server.js"
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gosttavo/stock-back.git"
