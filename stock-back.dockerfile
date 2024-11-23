@@ -4,22 +4,22 @@ FROM node:18
 # Define o diretório de trabalho no container
 WORKDIR /app
 
-# Copia o package.json e o package-lock.json (ou apenas o package.json se não tiver o lock)
+# Copia apenas os arquivos de dependências
 COPY package*.json ./
 
-# Instala as dependências do projeto
+# Instala as dependências
 RUN npm install
 
-# Copia os arquivos restantes do projeto para o diretório de trabalho
+# Copia todo o código para o container
 COPY . .
 
-# Compila o aplicativo TypeScript
+# Compila o código TypeScript
 RUN npm run build
 
-# Executa as migrações do banco de dados
-RUN npm run typeorm -- -d ./src/database/data-source.ts migration:run
+# Executa as migrações (opcional, se necessário)
+RUN npx dotenv -e .env.production -- ts-node ./node_modules/typeorm/cli.js -d ./src/database/data-source.ts migration:run
 
-# Expõe a porta que a aplicação usará
+# Expõe a porta usada pela aplicação
 EXPOSE 3333
 
 # Comando para executar a aplicação
