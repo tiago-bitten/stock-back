@@ -33,6 +33,7 @@ class SaidaRepository {
             .leftJoin('saida.produto', 'produto')
             .leftJoin('saida.fornecedor', 'fornecedor')
             .leftJoin('saida.lote', 'lote')
+            .addSelect('produto')
             .where(w => {
                 w.where('saida.empresa = :empresa', { empresa })
 

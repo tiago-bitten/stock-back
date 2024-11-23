@@ -6,11 +6,11 @@ import { migrations } from './migrations.list';
 
 dotenv.config();
 
-const DB_HOST = process.env.MYSQLHOST || process.env.DB_HOST;
-const DB_PORT = Number(process.env.MYSQLPORT) || Number(process.env.DB_PORT);
-const DB_USER = process.env.MYSQLUSER || process.env.DB_USER;
-const DB_PASS = process.env.MYSQLPASSWORD || process.env.DB_PASS;
-const DB_NAME = process.env.MYSQLDATABASE || process.env.DB_NAME;
+const DB_HOST = process.env.MYSQLHOST;
+const DB_PORT = Number(process.env.MYSQLPORT);
+const DB_USER = process.env.MYSQLUSER;
+const DB_PASS = process.env.MYSQLPASSWORD;
+const DB_NAME = process.env.MYSQLDATABASE;
 
 if (!DB_HOST || !DB_PORT || !DB_USER || !DB_PASS || !DB_NAME) {
   throw new Error('Algumas variáveis de ambiente do banco de dados estão ausentes.');
