@@ -4,7 +4,7 @@ import authMiddleware from "../middlewares/authMiddleware";
 
 const router = Router();
 
-router.get('/saida/total', authMiddleware(), SaidaController.getTotalSaidas);
+router.get('/saidaTotal', authMiddleware(), SaidaController.getTotalSaidas);
 
 router.get('/saida/:id', authMiddleware(), SaidaController.getSaida);
 router.get('/saida', authMiddleware(), SaidaController.getSaidas);
