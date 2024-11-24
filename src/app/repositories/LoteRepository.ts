@@ -12,6 +12,7 @@ class LoteRepository extends Lote {
             .createQueryBuilder('lote')
             .select('lote')
             .leftJoin('lote.produto', 'produto')
+            .addSelect(['produto.id', 'produto.descricao'])
             .where(w => {
                 w.where('lote.empresa = :empresa', { empresa })
 
