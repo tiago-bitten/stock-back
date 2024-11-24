@@ -45,6 +45,8 @@ class LoteRepository extends Lote {
         const lote = this.loteRepository
             .createQueryBuilder('lote')
             .select('lote')
+            .leftJoin('lote.produto', 'produto')
+            .addSelect(['produto.id', 'produto.descricao'])
             .where('lote.empresa = :empresa', { empresa })
             .andWhere('lote.id = :id', { id })
             .getOne();
