@@ -4,133 +4,101 @@ import ILote from "../interfaces/ILote";
 import Lote from "../models/Lote";
 import moment from "moment";
 
-class LoteRepository {
+class LoteRepository extends Lote {
     private loteRepository = AppDataSource.getRepository(Lote);
 
-    // Buscar lotes com filtros
-    public getLotes = async ({
-        empresa,
-        params
-    }: {
-        empresa: number;
-        params: {
-            skip: number;
-            produto?: number;
-            codigoBarras?: string;
-            dataFabricacao?: Date | moment.Moment;
-            dataVencimento?: Date | moment.Moment;
-            observacao?: string;
-        };
-    }): Promise<ILote[]> => {
-        const queryBuilder = this.loteRepository
+    public getLotes = ({empresa, params}: {empresa: any, params: { skip: number, produto?: number, codigoBarras?: string, dataFabricacao?: Date | moment.Moment, dataVencimento?: Date | moment.Moment, observacao?: string}}): Promise<ILote[]> => {
+        return this.loteRepository
             .createQueryBuilder('lote')
             .select('lote')
-            .addSelect('produto')
             .leftJoin('lote.produto', 'produto')
-            .where('lote.empresa = :empresa', { empresa });
+            .addSelect(['produto.id', 'produto.descricao'])
+            .where(w => {
+                w.where('lote.empresa = :empresa', { empresa })
 
-        if (params.produto) {
-            queryBuilder.andWhere('produto.id = :produto', { produto: params.produto });
-        }
+                if (params.produto) {
+                    w.where('produto.id = :produto', { produto: params.produto });
+                }
 
-        if (params.codigoBarras) {
-            queryBuilder.andWhere('lote.codigoBarras LIKE :codigoBarras', {
-                codigoBarras: `%${params.codigoBarras}%`,
-            });
-        }
+                if (params.codigoBarras) {
+                    w.andWhere('lote.codigoBarras LIKE :codigoBarras', { codigoBarras: `%${params.codigoBarras}%` });
+                }
+                
+                if (params.dataFabricacao) {
+                    w.andWhere('lote.dataFabricacao >= :dataFabricacao', { dataFabricacao: params.dataFabricacao });
+                }
 
-        if (params.dataFabricacao) {
-            queryBuilder.andWhere('lote.dataFabricacao >= :dataFabricacao', {
-                dataFabricacao: moment(params.dataFabricacao).format('YYYY-MM-DD'),
-            });
-        }
+                if (params.dataVencimento) {
+                    w.andWhere('lote.dataVencimento <= :dataVencimento', { dataVencimento: params.dataVencimento });
+                }
 
-        if (params.dataVencimento) {
-            queryBuilder.andWhere('lote.dataVencimento <= :dataVencimento', {
-                dataVencimento: moment(params.dataVencimento).format('YYYY-MM-DD'),
-            });
-        }
+                if (params.observacao) {
+                    w.andWhere('lote.observacao LIKE :observacao', { observacao: `%${params.observacao}%` });
+                }
+            })
+            .skip(params.skip)
+            .take(50)
+            .getMany();
+    }
 
-        if (params.observacao) {
-            queryBuilder.andWhere('lote.observacao LIKE :observacao', {
-                observacao: `%${params.observacao}%`,
-            });
-        }
-
-        return queryBuilder.skip(params.skip).take(50).getMany();
-    };
-
-    // Buscar um lote específico
-    public getLote = async ({
-        empresa,
-        id
-    }: {
-        empresa: number;
-        id?: number;
-    }): Promise<ILote | null> => {
-        const lote = await this.loteRepository
+    public getLote = ({empresa, id}: {empresa: number, id?: number}) => {        
+        const lote = this.loteRepository
             .createQueryBuilder('lote')
-            .leftJoin('lote.produto', 'produto')
             .select('lote')
+            .leftJoin('lote.produto', 'produto')
             .addSelect(['produto.id', 'produto.descricao'])
             .where('lote.empresa = :empresa', { empresa })
             .andWhere('lote.id = :id', { id })
             .getOne();
+        
+        return lote;
+    }
 
-        return lote || null;
-    };
-
-    // Criar novo lote
-    public createNewLote = async (lote: ILote): Promise<ILote> => {
+    public createNewLote = (lote: ILote) => {
         const newLote = this.loteRepository.create(lote as DeepPartial<Lote>);
-        return await this.loteRepository.save(newLote);
-    };
+        return this.loteRepository.save(newLote);
+    }
 
-    // Atualizar lote
-    public updateLote = async (lote: ILote): Promise<ILote> => {
-        return await this.loteRepository.save(lote as DeepPartial<Lote>);
-    };
+    public updateLote = (lote: ILote) => {
+        return this.loteRepository.save(lote as DeepPartial<Lote>);
+    }
 
-    // Deletar lote
-    public deleteLote = async (id: number): Promise<void> => {
-        await this.loteRepository.delete(id);
-    };
+    public deleteLote = (id: number) => {
+        return this.loteRepository.delete(id);
+    }
 
-    // Lotes próximos do vencimento
-    public getExpiringLotes = async (empresa: number, periodo: number): Promise<ILote[]> => {
+    // #region SQL Queries
+
+    public getExpiringLotes = async (empresa: number, periodo: number) => {
         const now = moment().format('YYYY-MM-DD');
         const expiringDate = moment().add(periodo, 'days').format('YYYY-MM-DD');
 
-        const lotes = await this.loteRepository
-            .createQueryBuilder('lote')
+        const lote = await this.loteRepository.createQueryBuilder('lote')
             .leftJoin('lote.produto', 'produto')
             .select('lote')
             .addSelect(['produto.id', 'produto.descricao'])
-            .where('lote.empresa = :empresa', { empresa })
-            .andWhere('lote.dataVencimento BETWEEN :now AND :expiringDate', {
-                now,
-                expiringDate,
-            })
+            .where('lote.empresa = :empresa', { empresa: empresa })
+            .andWhere('lote.dataVencimento BETWEEN :now AND :expiringDate', { now: now, expiringDate: expiringDate })
             .getMany();
 
-        return lotes;
-    };
+        return lote;
+    }
 
-    // Lotes vencidos
-    public getExpiredLotes = async (empresa: number): Promise<ILote[]> => {
+    public getExpiredLotes = async (empresa: number) => {
         const now = moment().format('YYYY-MM-DD');
 
-        const lotes = await this.loteRepository
-            .createQueryBuilder('lote')
+        const lote = await this.loteRepository.createQueryBuilder('lote')
             .leftJoin('lote.produto', 'produto')
             .select('lote')
             .addSelect(['produto.id', 'produto.descricao'])
-            .where('lote.empresa = :empresa', { empresa })
-            .andWhere('lote.dataVencimento < :now', { now })
+            .where('lote.empresa = :empresa', { empresa: empresa })
+            .andWhere('lote.dataVencimento < :dataVencimento', { dataVencimento: now })
             .getMany();
 
-        return lotes;
-    };
+        return lote;
+    }
+
+    // #endregion
 }
 
-export default new LoteRepository();
+export default new LoteRepository;
