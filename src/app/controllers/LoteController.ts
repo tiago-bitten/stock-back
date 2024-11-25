@@ -18,14 +18,18 @@ class LoteController {
      */
     public getExpiringLotes = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-
             const empresa = Number(req.query.empresa);
-            if (isNaN(empresa) || !empresa) {
-                return res.status(400).json({ message: 'Invalid or missing company ID' });
+
+            if (!empresa) {
+                return res.status(400).json({ message: 'Company not founded' });
             }
 
             const periodo = Number(req.params.periodo);
-            if (isNaN(periodo) || periodo < 1) {
+
+            if (
+                !periodo 
+                || periodo < 1
+            ) {
                 return res.status(400).json({ message: 'Invalid period' });
             }
 
@@ -51,7 +55,7 @@ class LoteController {
                 arrExpiringLotes
             });
         } catch (error) {
-            return res.status(500).json({
+            return res.status(500).json({ 
                 message: 'Internal server error',
                 error: error
             });
@@ -68,10 +72,10 @@ class LoteController {
      */
     public getExpiredLotes = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-
             const empresa = Number(req.query.empresa);
-            if (isNaN(empresa) || !empresa) {
-                return res.status(400).json({ message: 'Invalid or missing company ID' });
+
+            if (!empresa) {
+                return res.status(400).json({ message: 'Company not founded' });
             }
 
             const queryExpiredLotes = await LoteRepository.getExpiredLotes(empresa);
@@ -91,12 +95,12 @@ class LoteController {
                     produto: m.produto,
                     status: this.getLoteExpiringStatus(m.dataVencimento)
                 }));
-
+            
             return res.status(200).send({
                 arrExpiredLotes
             });
         } catch (error) {
-            return res.status(500).json({
+            return res.status(500).json({ 
                 message: 'Internal server error',
                 error: error
             });
@@ -113,17 +117,17 @@ class LoteController {
      */
     public getLote = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
+            const reqEmpresa = Number(req.query.empresa);
 
-            const empresa = Number(req.query.empresa);
-            if (isNaN(empresa) || !empresa) {
-                return res.status(400).json({ message: 'Invalid or missing company ID' });
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
             }
 
             const loteId = Number(req.params.id);
-            if (isNaN(loteId) || !loteId) {
-                return res.status(400).json({ message: 'Invalid or missing lote ID' });
-            }
 
+            if (!loteId) {
+                return res.status(400).json({message: 'Lote not informed'});
+            }
 
             const lote = await LoteRepository.getLote({
                 empresa: reqEmpresa,
@@ -138,7 +142,7 @@ class LoteController {
                 lote
             });
         } catch (error) {
-            return res.status(500).json({
+            return res.status(500).json({ 
                 message: 'Internal server error',
                 error: error
             });
@@ -155,31 +159,30 @@ class LoteController {
      */
     public getLotes = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
+            const reqEmpresa = req.query.empresa;
 
-            const empresa = Number(req.query.empresa);
-            if (isNaN(empresa) || !empresa) {
-                return res.status(400).json({ message: 'Invalid or missing company ID' });
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
             }
 
             const params = {
                 skip: req.query.skip ? Number(req.query.skip) : 0,
                 produto: req.query.produto ? Number(req.query.produto) : undefined,
                 codigoBarras: req.query.codigoBarras ? String(req.query.codigoBarras) : undefined,
-                dataFabricacao: req.query.dataFabricacao ? moment(req.query.dataFabricacao as string) : undefined,
-                dataVencimento: req.query.dataVencimento ? moment(req.query.dataVencimento as string) : undefined,
-                observacao: req.query.observacao ? String(req.query.observacao) : undefined,
-            };
-
+                dataFabricacao: req.query.dataFabricacao ? moment(String(req.query.dataFabricacao)) : undefined,
+                dataVencimento: req.query.dataVencimento ? moment(String(req.query.dataVencimento)) : undefined,
+                observacao: req.query.observacao ? String(req.query.observacao) : undefined
+            }
 
             const lotes = await LoteRepository.getLotes(
-                { empresa: reqEmpresa, params }
+                {empresa: reqEmpresa, params}
             );
 
             return res.status(200).send({
                 lotes
             });
         } catch (error) {
-            return res.status(500).json({
+            return res.status(500).json({ 
                 message: 'Internal server error',
                 error: error
             });
@@ -200,12 +203,11 @@ class LoteController {
      */
     public storeLote = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
+            const reqEmpresa = Number(req.query.empresa);
 
-            const empresa = Number(req.query.empresa);
-            if (isNaN(empresa) || !empresa) {
-                return res.status(400).json({ message: 'Invalid or missing company ID' });
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
             }
-
 
             const { codigoBarras, quantidade, observacoes, dataFabricacao, dataVencimento, produto } = req.body;
 
@@ -219,7 +221,7 @@ class LoteController {
             });
 
             if (!produtoExists) {
-                return res.status(400).json({ message: 'Produto not found' });
+                return res.status(400).json({message: 'Produto not found'});
             }
 
             const loteToCreate: ILote = {
@@ -243,7 +245,7 @@ class LoteController {
                 lote: newLote
             });
         } catch (error) {
-            return res.status(500).json({
+            return res.status(500).json({ 
                 message: 'Internal server error',
                 error: error
             });
@@ -267,13 +269,13 @@ class LoteController {
             const reqEmpresa = Number(req.query.empresa);
 
             if (!reqEmpresa) {
-                return res.status(400).json({ message: 'Company not found' });
+                return res.status(400).json({message: 'Company not found'});
             }
-
+            
             const loteId = Number(req.params.id);
 
             if (!loteId) {
-                return res.status(400).json({ message: 'Lote not informed' });
+                return res.status(400).json({message: 'Lote not informed'});
             }
 
             const { codigoBarras, quantidade, observacoes, dataFabricacao, dataVencimento, produto } = req.body;
@@ -298,9 +300,9 @@ class LoteController {
                     id: produto,
                     empresa: reqEmpresa
                 });
-
+    
                 if (!produtoExists) {
-                    return res.status(400).json({ message: 'Produto not found' });
+                    return res.status(400).json({message: 'Produto not found'});
                 }
 
                 loteToUpdate.produto = produto;
@@ -317,7 +319,7 @@ class LoteController {
                 lote: updatedLote
             });
         } catch (error) {
-            return res.status(500).json({
+            return res.status(500).json({ 
                 message: 'Internal server error',
                 error: error
             });
@@ -338,23 +340,29 @@ class LoteController {
      */
     public deleteLote = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
         try {
-            const empresa = Number(req.query.empresa);
-            if (isNaN(empresa) || !empresa) {
-                return res.status(400).json({ message: 'Invalid or missing company ID' });
+            const reqEmpresa = Number(req.query.empresa);
+
+            if (!reqEmpresa) {
+                return res.status(400).json({message: 'Company not found'});
             }
 
             const loteId = Number(req.params.id);
-            if (isNaN(loteId) || !loteId) {
-                return res.status(400).json({ message: 'Invalid or missing lote ID' });
+
+            if (!loteId) {
+                return res.status(400).json({message: 'Lote not informed'});
             }
 
-            await LoteRepository.deleteLote(loteId);
+            const deletedLote = await LoteRepository.deleteLote(loteId);
+
+            if (!deletedLote) {
+                return res.status(500).json({ message: 'Error while deleting lote' });
+            }
 
             return res.status(200).json({
                 message: 'Lote deleted successfully'
             });
         } catch (error) {
-            return res.status(500).json({
+            return res.status(500).json({ 
                 message: 'Internal server error',
                 error: error
             });
@@ -378,7 +386,7 @@ class LoteController {
             return 'expired';
         }
 
-        if (moment(dataVencimento).isSame(now)) {
+        if ( moment(dataVencimento).isSame(now)) {
             return 'expiring';
         }
 
