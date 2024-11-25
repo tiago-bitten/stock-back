@@ -30,10 +30,12 @@ class SaidaRepository {
         return this.saidaRepository
             .createQueryBuilder('saida')
             .select('saida')
+            .addSelect('produto')
+            .addSelect('fornecedor')
+            .addSelect('lote')
             .leftJoin('saida.produto', 'produto')
             .leftJoin('saida.fornecedor', 'fornecedor')
             .leftJoin('saida.lote', 'lote')
-            .addSelect('produto')
             .where(w => {
                 w.where('saida.empresa = :empresa', { empresa })
 
