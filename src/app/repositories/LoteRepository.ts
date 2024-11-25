@@ -11,8 +11,8 @@ class LoteRepository extends Lote {
         return this.loteRepository
             .createQueryBuilder('lote')
             .select('lote')
+            .addSelect('produto')
             .leftJoin('lote.produto', 'produto')
-            .addSelect(['produto.id', 'produto.descricao'])
             .where(w => {
                 w.where('lote.empresa = :empresa', { empresa })
 
@@ -21,7 +21,7 @@ class LoteRepository extends Lote {
                 }
 
                 if (params.codigoBarras) {
-                    w.andWhere('lote.codigoBarras LIKE :codigoBarras', { codigoBarras: `%${params.codigoBarras}%` });
+                    w.andWhere('lote.codigoBarras LIKE :codigoBarras', { codigoBarras: %${params.codigoBarras}% });
                 }
                 
                 if (params.dataFabricacao) {
@@ -33,7 +33,7 @@ class LoteRepository extends Lote {
                 }
 
                 if (params.observacao) {
-                    w.andWhere('lote.observacao LIKE :observacao', { observacao: `%${params.observacao}%` });
+                    w.andWhere('lote.observacao LIKE :observacao', { observacao: %${params.observacao}% });
                 }
             })
             .skip(params.skip)
@@ -44,8 +44,8 @@ class LoteRepository extends Lote {
     public getLote = ({empresa, id}: {empresa: number, id?: number}) => {        
         const lote = this.loteRepository
             .createQueryBuilder('lote')
-            .select('lote')
             .leftJoin('lote.produto', 'produto')
+            .select('lote')
             .addSelect(['produto.id', 'produto.descricao'])
             .where('lote.empresa = :empresa', { empresa })
             .andWhere('lote.id = :id', { id })
